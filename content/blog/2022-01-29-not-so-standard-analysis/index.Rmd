@@ -12,11 +12,11 @@ I was listening to another podcast (Your Mom's House), and another Eric, (who al
 
 As previously mentioned, I borrowed heavily from Eric Ekholme's analysis of Your Mom's House, which can be found at his [website](www.ericekholm.com). I recommend giving it a visit, he does Tidy Tuesday, where he posts a cool visualization about some cool data. 
 
-```{r setup1, echo = FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE , fig.height = 4, fig.width = 6, dpi = 300,fig.align = 'center')
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE , out.width = "600px", dpi = 300,fig.align = 'center')
 ```
 
-```{r setup2}
+```{r data munging}
 library(tidyverse)
 library(tidytext)
 library(ggthemes)

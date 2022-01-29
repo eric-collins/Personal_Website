@@ -6,7 +6,17 @@
     <description>Recent content on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Fri, 21 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 22 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>https://ericcollins.info/about/</link>
+      <pubDate>Sat, 22 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/about/</guid>
+      <description>Hello, I&amp;rsquo;m Eric. I&amp;rsquo;m a data analyst for Volusia County Schools, and I have an odd array of experiences.
+Originally, I&amp;rsquo;m from Auburndale, Florida, where I grew up and attended high school. I moved to DeLand, Florida, in 2015 to attend Stetson University. At Stetson I studied Economics, but was most interested in Applied Statistics and prediction modelling. At the time, I didn&amp;rsquo;t even know there was such a thing as &amp;ldquo;machine learning&amp;rdquo;, but I&amp;rsquo;m sure if I did I wouldn&amp;rsquo;t have cared anyway, since I was enamored by a lovely young lady named Abigail, who I eventually married.</description>
+    </item>
+    
     <item>
       <title>#tidyTuesday, 1/18/2022, Chocolate</title>
       <link>https://ericcollins.info/blog/2022-01-29-tidy-tuesday-1182022/</link>
@@ -25,17 +35,6 @@ library(tidyverse)## -- Attaching packages ------------------------------------
       <guid>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</guid>
       <description>I was listening to another podcast (Your Mom’s House), and another Eric, (who also happens to be another public-education data analyst) submitted an analysis of the episodes using transcripts of the episode. I wanted to add some language processing to my repertoire, so I decided to perform a similar analysis for my favorite podcast, Not-so-Standard Deviations.
 As previously mentioned, I borrowed heavily from Eric Ekholme’s analysis of Your Mom’s House, which can be found at his website.</description>
-    </item>
-    
-    <item>
-      <title></title>
-      <link>https://ericcollins.info/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericcollins.info/about/</guid>
-      <description>categories:
- about comments: false date: &amp;ldquo;2022-01-22&amp;rdquo; draft: false showpagemeta: false slug: &amp;quot;&amp;quot; tags: about title: About   Hello, I&amp;rsquo;m Eric. I&amp;rsquo;m a data analyst for Volusia County Schools, and I have an odd array of experiences.
-Originally, I&amp;rsquo;m from Auburndale, Florida, where I grew up and attended high school. I moved to DeLand, Florida, in 2015 to attend Stetson University. At Stetson I studied Economics, but was most interested in Applied Statistics and prediction modelling.</description>
     </item>
     
   </channel>

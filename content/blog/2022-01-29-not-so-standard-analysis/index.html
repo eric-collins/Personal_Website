@@ -76,7 +76,7 @@ ggplot(data = scripts_one, mapping = aes(x = ep_num, y = ep_length)) +
         xlab(&quot;Episode Number&quot;) +
         ylab(&quot;Length of Episode (Minutes)&quot;) +
         theme_hc()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" width="600px" style="display: block; margin: auto;" /></p>
 <p>Generally, episodes have been having a downward trend in total time. The shortest episode is <em>95 - Summarisze</em>, and the longest episode is <em>117 - Failing in Statistics</em>. I don’t know why episodes were so short in the upper 90’s episodes, but it’s an interesting trend.</p>
 <p>Let’s look at the actual words that were spoken now. First, the most common word across all episodes, while eliminating the common stop words.</p>
 <pre class="r"><code>words &lt;- scripts_one %&gt;%
@@ -95,7 +95,7 @@ ggplot(data = top20, mapping = aes(label = word, size = n, color = n)) +
         scale_size_area(max_size = 20) +
         scale_color_gradient(low = grey, high = pink) +
         theme_hc()</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="600px" style="display: block; margin: auto;" /></p>
 <p>It would appear our hosts spend of a lot of time guessing how they feel about data. An interesting note is that coffee and tea don’t come up at all, so let’s see just how often our hosts talk about their favorite beverages (my personal favorite parts of the podcast).</p>
 <pre class="r"><code>beverages &lt;- data.frame(word = c(&quot;tea&quot;, &quot;coffee&quot;, &quot;analysis&quot;))
 
@@ -129,7 +129,7 @@ ggplot(data = interesting_df, mapping = aes(x = ep_num, y = n, group = word, col
         scale_color_manual(values = cols, aesthetics = &quot;color&quot;)+
         theme_hc()+
         theme(plot.title = element_markdown(), legend.position = &quot;none&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="1800" style="display: block; margin: auto;" />
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.png" width="600px" style="display: block; margin: auto;" />
 <em>Episode 129 - Monetizing False Positives</em> had the most references to coffee (26) and <em>Episode 140 - Booboo Detection</em> had the most references to tea. I think it’s worthwhile to plot these again, but instead of analysis, using “data” as our benchmark</p>
 <pre class="r"><code>beverages &lt;- data.frame(word = c(&quot;tea&quot;, &quot;coffee&quot;, &quot;data&quot;))
 
@@ -159,7 +159,7 @@ ggplot(data = interesting_df, mapping = aes(x = ep_num, y = n, group = word, col
         scale_color_manual(values = cols, aesthetics = &quot;color&quot;) +
         theme_hc()+
         theme(plot.title = element_markdown(), legend.position = &quot;none&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="600px" style="display: block; margin: auto;" /></p>
 <p>Normally on episodes where coffee is mentioned, there is less talk about data. However, data is still the dominate topic of conversation. I think a good take-away is that our hosts should talk about coffee and tea far more than they do.</p>
 <p>But let’s say you don’t like hearing about coffee or tea. Where should you stop listening or start listening to avoid the coffee talk (or if you’re like me try to find the coffee talk)?</p>
 <p>We can place words into segments by when they were said so we can plot word counts by minute in the episode across all episodes.</p>
@@ -187,7 +187,7 @@ ggplot(data = interesting_segments, mapping = aes(x = group, y = n, color = word
         scale_color_manual(values = cols, aesthetics = &quot;color&quot;) +
         theme_hc()+
         theme(plot.title = element_markdown(), legend.position = &quot;none&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="600px" style="display: block; margin: auto;" /></p>
 <p>If you want to avoid coffee talk, start your episodes around the 20 minute mark. If you only want to hear about coffee, only listen to the first 20 minutes of the episode.</p>
 </div>
 <div id="key-takeaway" class="section level3">
