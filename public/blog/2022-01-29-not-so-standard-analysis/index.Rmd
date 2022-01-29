@@ -13,7 +13,7 @@ I was listening to another podcast (Your Mom's House), and another Eric, (who al
 As previously mentioned, I borrowed heavily from Eric Ekholme's analysis of Your Mom's House, which can be found at his [website](www.ericekholm.com). I recommend giving it a visit, he does Tidy Tuesday, where he posts a cool visualization about some cool data. 
 
 ```{r setup, echo = FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE , out.width = "600px", dpi = 300,fig.align = 'center')
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE , out.width = "600px", dpi = 1000,fig.align = 'center')
 ```
 
 ```{r data munging}
