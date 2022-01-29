@@ -33,8 +33,13 @@ params:
     description: Blog of Eric Collins
     keywords: blog, data, data science, analysis, data analysis
   social:
+<<<<<<< HEAD
     github: eric-collins?tab=repositories
     linkedin: eric-collins-jr/
+=======
+    github: https://github.com/eric-collins?tab=repositories
+    linkedin: https://www.linkedin.com/in/eric-collins-jr/
+>>>>>>> 0decc3211818eb0d337b15a8b7523ff4dfaa08a6
 menu:
   main:
     - identifier: blog
