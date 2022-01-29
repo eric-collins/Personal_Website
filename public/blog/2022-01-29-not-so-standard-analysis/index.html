@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Blog of Eric Collins">
+<meta name="keywords" content="blog, data, data science, analysis, data analysis">
+
+<title>
+  Hi, I&#39;m Eric - Not So Standard Analysis 
+</title>
+
+<meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Roboto+Slab:wght@400;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<link rel="stylesheet" href="https://ericcollins.info/css/main.css">
+<link rel="stylesheet" href="https://ericcollins.info/css/custom.css">
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="text-left title">
+  <h1 class="title">Not So Standard Analysis</h1>
+</header>
+<section id="category-pane" class="meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON NOV 12, 2021 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="">
+  <div class="col-md-12 text-justify content">
+    
+    
+    
+    
+<script src="https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I was listening to another podcast (Your Mom’s House), and another Eric, (who also happens to be another public-education data analyst) submitted an analysis of the episodes using transcripts of the episode. I wanted to add some language processing to my repertoire, so I decided to perform a similar analysis for my favorite podcast, Not-so-Standard Deviations.</p>
+<p>As previously mentioned, I borrowed heavily from Eric Ekholme’s analysis of Your Mom’s House, which can be found at his <a href="www.ericekholm.com">website</a>. I recommend giving it a visit, he does Tidy Tuesday, where he posts a cool visualization about some cool data.</p>
+<pre class="r"><code>library(tidyverse)
+library(tidytext)
+library(ggthemes)
+library(ggrepel)
+library(ggwordcloud)
+library(ggtext)
+
+
+
+scripts &lt;- read_csv(&quot;transcripts.csv&quot;, show_col_types = FALSE)
+
+scripts &lt;- scripts %&gt;%
+        mutate(ep_num = substr(title, 0,3)) %&gt;%
+        mutate(ep_num = as.numeric(ep_num))
+
+#Tidying the dataset to one episode per row
+
+scripts_one &lt;- scripts %&gt;%
+        group_by(ep_num) %&gt;%
+        mutate(full_text = str_c(text, collapse = &quot; &quot;) %&gt;%
+        str_to_lower()) %&gt;%
+        mutate(ep_length = (max(start) + max(duration)) / 60) %&gt;%
+        select(published_date, title, ep_num, full_text, ep_length) %&gt;%
+        distinct() %&gt;%
+        ungroup()</code></pre>
+<div id="data-collection-and-processing" class="section level3">
+<h3>Data Collection and Processing</h3>
+<p>The process for data collection was pretty interesting. Youtube automatically generates a transcript of any video using their auto-generated captions and they can be accessed using the Google API. A tool was built at www.williamsportwebdeveloper.com/FaxBackUp.aspx that accesses the Google API and uses a Youtube playlist link to download the Youtube URLs of all the videos in a Youtube playlist. Those URLs can then be used to extract the auto-generated transcripts using the youtubecaptions package. That code can be found on the <a href="https://github.com/eric-collins/NSSD-Analysis">git-hub repo</a> for the project. Again, this was discovered by Eric Ekohlm.</p>
+<p>There are a few restrictions in accessing the data this way:</p>
+<ol style="list-style-type: decimal">
+<li>The data are auto-generating, so transcription is not perfect.</li>
+<li>The speaker is not tagged, so there’s no way to tell if Roger or Hilary is speaking.</li>
+<li>I can only get data from episodes on Youtube, so according to my extremely limited research that’s episodes 71-143.</li>
+<li>Data were not able to be collected for <em>Episode 119 - Election Night Data Science</em> because captions were turned off for the episode.</li>
+</ol>
+</div>
+<div id="analysis" class="section level3">
+<h3>Analysis</h3>
+<p>There are 71 episodes available for analysis. Let’s begin by looking at episode length.</p>
+<pre class="r"><code>#Pink from logo
+pink &lt;- &quot;#cd509b&quot;
+#Grey from logo
+grey &lt;- &quot;#7c7270&quot;
+
+
+episode_length_for_highlight &lt;- scripts_one %&gt;%
+        filter(ep_length &lt; 20 | ep_length &gt; 80)
+
+length_min_max &lt;- scripts_one %&gt;%
+        filter(ep_length == max(ep_length) | ep_length == min(ep_length))
+
+ggplot(data = scripts_one, mapping = aes(x = ep_num, y = ep_length)) +
+        geom_line(color = &quot;black&quot;, size = 2) +
+        geom_line(color = pink, size = 1.4) + 
+        geom_point(color = grey, alpha = .5) + 
+        geom_point(episode_length_for_highlight, mapping = aes(x = ep_num, y = ep_length), color = &quot;red&quot;) +
+        geom_label_repel(episode_length_for_highlight, mapping = aes(label = title)) +
+        geom_point(data = length_min_max, mapping = aes(x = ep_num, y = ep_length), color = &quot;blue&quot;) +
+        geom_smooth(data = scripts_one, method = &quot;lm&quot;, se = FALSE, color = &quot;black&quot;) +
+        labs(title = &quot;Length of NSSD Episodes&quot;) +
+        xlab(&quot;Episode Number&quot;) +
+        ylab(&quot;Length of Episode (Minutes)&quot;) +
+        theme_hc()</code></pre>
+<p><img src="https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/index_files/figure-html/unnamed-chunk-1-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p>Generally, episodes have been having a downward trend in total time. The shortest episode is <em>95 - Summarisze</em>, and the longest episode is <em>117 - Failing in Statistics</em>. I don’t know why episodes were so short in the upper 90’s episodes, but it’s an interesting trend.</p>
+<p>Let’s look at the actual words that were spoken now. First, the most common word across all episodes, while eliminating the common stop words.</p>
+<pre class="r"><code>words &lt;- scripts_one %&gt;%
+        unnest_tokens(word, full_text) %&gt;%
+        anti_join(stop_words) %&gt;%
+        filter(!(word %in% c(&quot;yeah&quot;, &quot;um&quot;, &quot;uh&quot;, &quot;stuff&quot;, &quot;people&quot;, &quot;lot&quot;, &quot;gonna&quot;)))
+
+
+top20 &lt;- words %&gt;%
+        count(word) %&gt;%
+        slice_max(n = 20, order_by = n)
+        
+
+ggplot(data = top20, mapping = aes(label = word, size = n, color = n)) +
+        geom_text_wordcloud() +
+        scale_size_area(max_size = 20) +
+        scale_color_gradient(low = grey, high = pink) +
+        theme_hc()</code></pre>
+<p><img src="https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/index_files/figure-html/unnamed-chunk-2-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p>It would appear our hosts spend of a lot of time guessing how they feel about data. An interesting note is that coffee and tea don’t come up at all, so let’s see just how often our hosts talk about their favorite beverages (my personal favorite parts of the podcast).</p>
+<pre class="r"><code>beverages &lt;- data.frame(word = c(&quot;tea&quot;, &quot;coffee&quot;, &quot;analysis&quot;))
+
+interesting_df &lt;- scripts_one %&gt;%
+        unnest_tokens(word, full_text) %&gt;%
+        anti_join(stop_words) %&gt;%
+        filter(!(word %in% c(&quot;yeah&quot;, &quot;um&quot;, &quot;uh&quot;, &quot;stuff&quot;, &quot;people&quot;, &quot;lot&quot;, &quot;gonna&quot;))) %&gt;%
+        left_join(beverages, .) %&gt;%
+        drop_na() %&gt;%
+        count(ep_num, word)
+
+min_max_coffee &lt;- interesting_df %&gt;%
+        group_by(word) %&gt;%
+        filter(n == max(n))%&gt;%
+        filter(word == &quot;coffee&quot; | word == &quot;tea&quot;) 
+
+
+cols &lt;- c(&quot;coffee&quot; = pink, &quot;analysis&quot; = grey, &quot;tea&quot; = &quot;#8074ac&quot;)
+
+ggplot(data = interesting_df, mapping = aes(x = ep_num, y = n, group = word, color = word)) +
+        geom_label_repel(data = min_max_coffee, mapping = aes(label = ep_num), 
+                         color = &quot;black&quot;, size = 5.3, nudge_x = -5, nudge_y = 12, show.legend = FALSE) +
+        geom_label_repel(data = min_max_coffee, mapping = aes(label = ep_num), 
+                         size = 5, alpha = .5, nudge_x = -5 ,nudge_y = 12, show.legend = FALSE) +
+        geom_point() +
+        geom_line(size = 2, color = &quot;black&quot;) +
+        geom_line(size = 1.4) +
+        labs(title = &quot;Counts of &lt;span style=&#39;color:#cd509b&#39;&gt;Coffee&lt;/span&gt; and &lt;span style=&#39;color:#8074ac&#39;&gt;Tea&lt;/span&gt; against &lt;span style=&#39;color:#7c7270&#39;&gt;Analysis&lt;/span&gt; by Episode&quot;) +
+        xlab(&quot;Episode Number&quot;) +
+        ylab(&quot;Count of Word&quot;) +
+        scale_color_manual(values = cols, aesthetics = &quot;color&quot;)+
+        theme_hc()+
+        theme(plot.title = element_markdown(), legend.position = &quot;none&quot;)</code></pre>
+<p><img src="https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/index_files/figure-html/unnamed-chunk-3-1.png" width="1800" style="display: block; margin: auto;" />
+<em>Episode 129 - Monetizing False Positives</em> had the most references to coffee (26) and <em>Episode 140 - Booboo Detection</em> had the most references to tea. I think it’s worthwhile to plot these again, but instead of analysis, using “data” as our benchmark</p>
+<pre class="r"><code>beverages &lt;- data.frame(word = c(&quot;tea&quot;, &quot;coffee&quot;, &quot;data&quot;))
+
+interesting_df &lt;- scripts_one %&gt;%
+        unnest_tokens(word, full_text) %&gt;%
+        anti_join(stop_words) %&gt;%
+        filter(!(word %in% c(&quot;yeah&quot;, &quot;um&quot;, &quot;uh&quot;, &quot;stuff&quot;, &quot;people&quot;, &quot;lot&quot;, &quot;gonna&quot;))) %&gt;%
+        left_join(beverages, .) %&gt;%
+        drop_na() %&gt;%
+        count(ep_num, word)
+
+min_max_coffee &lt;- interesting_df %&gt;%
+        group_by(word) %&gt;%
+        filter(n == max(n))%&gt;%
+        filter(word == &quot;coffee&quot; | word == &quot;tea&quot;) 
+
+
+cols &lt;- c(&quot;coffee&quot; = pink, &quot;data&quot; = grey, &quot;tea&quot; = &quot;#8074ac&quot;)
+
+ggplot(data = interesting_df, mapping = aes(x = ep_num, y = n, group = word, color = word)) +
+        geom_point() +
+        geom_line(size = 2, color = &quot;black&quot;) +
+        geom_line(size = 1.4) +
+        labs(title = &quot;Counts of &lt;span style=&#39;color:#cd509b&#39;&gt;Coffee&lt;/span&gt; and &lt;span style=&#39;color:#8074ac&#39;&gt;Tea&lt;/span&gt; against &lt;span style=&#39;color:#7c7270&#39;&gt;Data&lt;/span&gt; by Episode&quot;) +
+        xlab(&quot;Episode Number&quot;) +
+        ylab(&quot;Count of Word&quot;) +
+        scale_color_manual(values = cols, aesthetics = &quot;color&quot;) +
+        theme_hc()+
+        theme(plot.title = element_markdown(), legend.position = &quot;none&quot;)</code></pre>
+<p><img src="https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/index_files/figure-html/unnamed-chunk-4-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p>Normally on episodes where coffee is mentioned, there is less talk about data. However, data is still the dominate topic of conversation. I think a good take-away is that our hosts should talk about coffee and tea far more than they do.</p>
+<p>But let’s say you don’t like hearing about coffee or tea. Where should you stop listening or start listening to avoid the coffee talk (or if you’re like me try to find the coffee talk)?</p>
+<p>We can place words into segments by when they were said so we can plot word counts by minute in the episode across all episodes.</p>
+<pre class="r"><code>segments &lt;- scripts %&gt;%
+        unnest_tokens(word, text) %&gt;%
+        group_by(title) %&gt;%
+        mutate(time = ((start + duration) / 60)) %&gt;%
+        mutate(group = round(time)) %&gt;%
+        ungroup() %&gt;%
+        count(group, word)
+
+interesting_segments &lt;- segments %&gt;%
+        filter(word == &quot;data&quot; | word == &quot;coffee&quot;)
+
+cols &lt;- c(&quot;coffee&quot; = pink, &quot;data&quot; = grey)
+        
+
+ggplot(data = interesting_segments, mapping = aes(x = group, y = n, color = word, group = word)) + 
+        geom_point() + 
+        geom_smooth(size = 2, color = &quot;black&quot;, se = FALSE) +
+        geom_smooth(size = 1.4, se = FALSE) +
+        labs(title = &quot;Counts of &lt;span style=&#39;color:#cd509b&#39;&gt;Coffee&lt;/span&gt; against &lt;span style=&#39;color:#7c7270&#39;&gt;Data&lt;/span&gt;&quot;) +
+        xlab(&quot;Minute of Episode (Across all Episodes)&quot;) +
+        ylab(&quot;Count of Word&quot;) +
+        scale_color_manual(values = cols, aesthetics = &quot;color&quot;) +
+        theme_hc()+
+        theme(plot.title = element_markdown(), legend.position = &quot;none&quot;)</code></pre>
+<p><img src="https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/index_files/figure-html/unnamed-chunk-5-1.png" width="1800" style="display: block; margin: auto;" /></p>
+<p>If you want to avoid coffee talk, start your episodes around the 20 minute mark. If you only want to hear about coffee, only listen to the first 20 minutes of the episode.</p>
+</div>
+<div id="key-takeaway" class="section level3">
+<h3>Key Takeaway</h3>
+<p>Our hosts should be spending additional time discussing coffee, and should significantly increase their time discussing tea.</p>
+</div>
+<div id="limitations-and-further-research" class="section level3">
+<h3>Limitations and Further Research</h3>
+<p>Limitations were discussed at the beginning of the analysis, and are primarily focused on the limitations of accessing the data. While the process was simple, it doesn’t result in the largest dataset. Eventually this process could be rerun to see if the hosts change topics significantly over time.</p>
+<p>It would be highly interesting if we could build a model that could predict episode “success” based on previous transcripts. Unfortunately, I don’t have simple access to metrics, and it appears most people don’t watch the podcast on Youtube. Conglomerating all metrics across all podcasting mediums would be time-consuming at best and a full-time job at worst. In addition, optimizing the podcast could result in it becoming more niche and less interesting and inviting to new listeners, but the process could be interesting nonetheless.</p>
+</div>
+<div id="thanks-and-citations" class="section level3">
+<h3>Thanks and Citations</h3>
+<p>Thank you for taking the time to look at and review this document. I’m a huge fan of the podcast and the Coursera courses.</p>
+<p>Thank you to Eric Ekholm for posting his analysis and sharing it on Your Mom’s House.</p>
+<p>EE (2020, Sept. 20). Eric Ekholm: Your Mom’s House Analysis. Retrieved from
+<a href="https://www.ericekholm.com/posts/2021-01-11-your-moms-house-analysis/" class="uri">https://www.ericekholm.com/posts/2021-01-11-your-moms-house-analysis/</a></p>
+</div>
+
+  </div>
+</section>
+<section id="tag-pane" class="meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/data-analysis">DATA ANALYSIS</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-shenoybr-github-io-hugo-goa-demo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="menu text-center">
+  
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  <span><a class="menu-item" href="https://ericcollins.info/blog/2022-01-29-tidy-tuesday-1182022/"> | next &gt;</a></span>
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://ericcollins.info">home</a></h4>
+</section>
+
+
+
+<footer class="text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Eric Collins. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo  v0.92.0</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+      
+      <h6><a href="" aria-label="RSS Feed"><i class="fas fa-rss" aria-hidden="true"></i></a></h6>
+    
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/custom.js"></script>
+</body>
+</html>
+
+

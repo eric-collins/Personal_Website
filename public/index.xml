@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hi, I&#39;m Eric</title>
+    <link>https://ericcollins.info/</link>
+    <description>Recent content on Hi, I&#39;m Eric</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Fri, 21 Jan 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>#tidyTuesday, 1/18/2022, Chocolate</title>
+      <link>https://ericcollins.info/blog/2022-01-29-tidy-tuesday-1182022/</link>
+      <pubDate>Fri, 21 Jan 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/blog/2022-01-29-tidy-tuesday-1182022/</guid>
+      <description>In my household, we go through a lot of chocolate. Having a pregnant wife severely increases the amount of sweets in the house, and sympathy weight gain is very real. This weeks Tidy Tuesday has man interesting features. Let’s start exploring.
+library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.5 v purrr 0.3.4## v tibble 3.1.5 v dplyr 1.0.7## v tidyr 1.1.4 v stringr 1.</description>
+    </item>
+    
+    <item>
+      <title>Not So Standard Analysis</title>
+      <link>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</link>
+      <pubDate>Fri, 12 Nov 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</guid>
+      <description>I was listening to another podcast (Your Mom’s House), and another Eric, (who also happens to be another public-education data analyst) submitted an analysis of the episodes using transcripts of the episode. I wanted to add some language processing to my repertoire, so I decided to perform a similar analysis for my favorite podcast, Not-so-Standard Deviations.
+As previously mentioned, I borrowed heavily from Eric Ekholme’s analysis of Your Mom’s House, which can be found at his website.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://ericcollins.info/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/about/</guid>
+      <description>categories:
+ about comments: false date: &amp;ldquo;2022-01-22&amp;rdquo; draft: false showpagemeta: false slug: &amp;quot;&amp;quot; tags: about title: About   Hello, I&amp;rsquo;m Eric. I&amp;rsquo;m a data analyst for Volusia County Schools, and I have an odd array of experiences.
+Originally, I&amp;rsquo;m from Auburndale, Florida, where I grew up and attended high school. I moved to DeLand, Florida, in 2015 to attend Stetson University. At Stetson I studied Economics, but was most interested in Applied Statistics and prediction modelling.</description>
+    </item>
+    
+  </channel>
+</rss>

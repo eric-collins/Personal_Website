@@ -1,0 +1,47 @@
+baseurl: https://ericcollins.info
+builddrafts: no
+canonifyurls: no
+languageCode: en-US
+contentdir: content
+layoutdir: layouts
+publishdir: public
+author: Eric Collins
+title: Hi, I'm Eric
+theme: hugo-goa
+disqusShortname: https-shenoybr-github-io-hugo-goa-demo
+googleAnalytics: XYZ
+enableRobotsTXT: yes
+params:
+  author: Eric Collins
+  authorimage: badge_pic.jpg
+  dateformat: Jan 2, 2006
+  description: | 
+        Currently @volusiaschools, using data analytics and data science to inform stategic policy descisions.
+  
+        "Solving a problem is hard enough; it gets that much harder if you’ve decided beforehand it can’t be done.”
+  
+        ― Steven Levitt, Stephen Dubner, *Think Like a Freak*
+  extra:
+    copyright: © 2022. Eric Collins. [Some Rights Reserved](http://creativecommons.org/licenses/by/3.0/).
+    displayrssicon: yes
+    highlightjs: yes
+    poweredby: yes
+    socialmarkup: yes
+    toc: yes
+  intro: Data Scientist/Lego Enthusiast/Mario Kart Nerd
+  meta:
+    description: Blog of Eric Collins
+    keywords: blog, data, data science, analysis, data analysis
+  social:
+    github: https://github.com/eric-collins?tab=repositories
+    linkedin: https://www.linkedin.com/in/eric-collins-69775b124/
+menu:
+  main:
+    - identifier: blog
+      name: blog
+      url: /blog/
+      weight: 100
+    - identifier: about
+      name: about
+      url: /about/
+      weight: 200
