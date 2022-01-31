@@ -1,0 +1,279 @@
+---
+title: '#tidytuesday, 1/29/2022, Board Games'
+author: Eric Collins
+date: '2022-01-29'
+slug: []
+categories:
+  - tidytuesday
+tags:
+  - tidy
+  - data
+  - Data Analysis
+  - data science
+comments: no
+showcomments: no
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Like any good nerd, I enjoy a good game. Games have rules, and learning to navigate and bend rules are what good data scientists are always trying to do. We try to take advantages of the way natural systems are built to model them in the most effective way possible. So when I saw this weeks tidy tuesday dataset, I was stoked.</p>
+<p>First, a tad of exploratory analysis.</p>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(ggthemes)
+library(ggrepel)
+library(gganimate)
+
+tuesdata &lt;- tidytuesdayR::tt_load(&quot;2022-01-25&quot;)</code></pre>
+<pre><code>## 
+##  Downloading file 1 of 2: `details.csv`
+##  Downloading file 2 of 2: `ratings.csv`</code></pre>
+<pre class="r"><code>details &lt;- tuesdata$details
+ratings &lt;- tuesdata$ratings
+
+
+master &lt;- inner_join(ratings, details, by = c(&quot;id&quot; = &quot;id&quot;)) %&gt;%
+        select(-c(num.y)) %&gt;%
+        rename(num = num.x)</code></pre>
+<p>First, let’s check the distribution of ratings across all games.</p>
+<pre class="r"><code>ggplot(data = master) +
+        geom_density(mapping = aes(x = average), fill = &quot;#014d64&quot;) +
+        labs(title = &quot;Distribution of Average Ratings&quot;) +
+        xlab(&quot;Average Rating&quot;) +
+        theme_economist()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The average rating sits well above a 5 like we would expect. So either most games are better than average, or 5 isn’t the score a scorer would give an average game.</p>
+<p>I’ve been playing around with animating plots recently to add some more interest to posts. Let’s explore how average ratings change by release year of the game.</p>
+<p>There is an issue with the dataset where ancient games are causing some wackiness. I’m only going to include games made after 1950, with chess as a baseline to compare against.</p>
+<pre class="r"><code>ancient_games &lt;- ratings %&gt;%
+        filter(!year %in% c(1950:2022),
+               year != 2023)
+
+modern_games &lt;- ratings %&gt;%
+        anti_join(ancient_games) %&gt;%
+        group_by(year) %&gt;%
+        summarize(avg_rating = mean(average))
+
+chess&lt;- ratings %&gt;%
+        filter(id %in% c(171))
+
+lowest_year &lt;- modern_games %&gt;%
+        slice_min(order_by = avg_rating, n = 1)
+
+
+year_plot &lt;- ggplot(data = modern_games) +
+        geom_line(aes(x = year, y = avg_rating)) +
+        geom_point(aes(x = year, y = avg_rating))+
+        #geom_point(data = lowest_year, aes(x = year, y = avg_rating), color = &quot;#01a2d9&quot;) +
+        #geom_label_repel(data = lowest_year, aes(x = year, y = avg_rating, label = year))
+        geom_hline(data = chess, aes(yintercept = average, color = name)) +
+        theme_economist() +
+        labs(title = &quot;Average Rating of Games vs Year&quot;, color = element_blank()) +
+        ylab(&quot;Average Rating of All Games Released&quot;) +
+        xlab(&quot;Release Year&quot;) +
+        ylim(0,10) +
+        scale_color_manual(values = c(&quot;#7c260b&quot;)) +
+        theme(axis.title.x = element_text(vjust = -1), axis.title.y = element_text(vjust = 3)) + 
+        gganimate::transition_reveal(modern_games$year)
+
+animate(year_plot, renderer = gifski_renderer())</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.gif" style="display: block; margin: auto;" /></p>
+<p>What was happening in 1957?</p>
+<pre class="r"><code>master %&gt;%
+        filter(year == 1957) %&gt;%
+        select(name, average, users_rated)</code></pre>
+<pre><code>## # A tibble: 2 x 3
+##   name                                average users_rated
+##   &lt;chr&gt;                                 &lt;dbl&gt;       &lt;dbl&gt;
+## 1 Don&#39;t Spill the Beans                  4.17         341
+## 2 Curious George Match-a-Balloon Game    3.68          39</code></pre>
+<p>I probably wouldn’t rate these two games very high either.</p>
+<p>Let’s look at ratings by game designer since 1980. This will be the top 10 most prolific designers.</p>
+<pre class="r"><code>designers &lt;- master %&gt;%
+        mutate(designer = str_sub(boardgamedesigner, start = 3, end = -3)) %&gt;%
+        separate(designer, into = c(&quot;Designer&quot;), sep = &quot;,&quot;) %&gt;%
+        mutate(Designer = str_trim(str_replace_all(Designer, pattern = &quot;&#39;&quot;, &quot;&quot;)),
+               Designer = if_else(is.na(Designer), &quot;(Uncredited)&quot;, Designer)) %&gt;%
+        filter(year %in% c(1980:2022)) %&gt;%
+        select(Designer, name, average)
+
+
+designer_count &lt;- designers %&gt;%
+        count(Designer, sort = TRUE) %&gt;%
+        slice_max(n, n = 10)
+
+top_designers &lt;- inner_join(designer_count, designers) %&gt;%
+        group_by(Designer) %&gt;%
+        summarize(mean_score = mean(average))
+
+
+
+designer_plot &lt;- ggplot(data = top_designers) +
+        geom_col(aes(x = Designer, y = mean_score, fill = mean_score)) +
+        theme_economist() +
+        theme(axis.text.x = element_text(angle = -15, size = 8),
+              axis.title.y = element_text(vjust = 2),
+              legend.position = &quot;None&quot;) +
+        labs(title = &quot;Average Score by Designer Since 1980&quot;) +
+        xlab(&quot;Designer&quot;) +
+        ylab(&quot;Average Score&quot;) +
+        ylim(0,10) +
+        transition_states(Designer, wrap = FALSE) +
+        shadow_mark() +
+        enter_grow()
+
+
+animate(designer_plot, renderer = gifski_renderer())</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.gif" style="display: block; margin: auto;" /></p>
+<p>It’s interesting that most games go uncredited, and that these designers are so consistent with getting between a 6 and a 7.5 average score on their games</p>
+</div>
+<div id="model-building" class="section level2">
+<h2>Model Building</h2>
+<p>Let’s build a model to predict the rating of the game based on the minimum number of players, maximum number of players, playtime, minimum play age, and the board game category.</p>
+<p>I’ll be using an xgboost, and will be following Julia Silge’s tutorial for interpretability at <a href="https://juliasilge.com/blog/board-games/" class="uri">https://juliasilge.com/blog/board-games/</a></p>
+<p>Setting up the recipe:</p>
+<pre class="r"><code>set.seed(1337)
+
+modified_master &lt;- master %&gt;%
+        select(name, average, matches(&quot;min|max&quot;), playingtime, boardgamecategory) %&gt;%
+        mutate(average = as.numeric(average)) %&gt;%
+        na.omit() %&gt;%
+        separate(boardgamecategory, into = c(&quot;prim_cat&quot;, &quot;sec_cat&quot;, &quot;ter_cat&quot;), sep = &quot;, &quot;, ) %&gt;%
+        mutate(prim_cat = str_remove_all(prim_cat, &quot;[:punct:]&quot;),
+               sec_cat = str_remove_all(sec_cat, &quot;[:punct:]&quot;),
+               ter_cat = str_remove_all(ter_cat, &quot;[:punct:]&quot;)) %&gt;%
+        replace(is.na(.), &quot;None&quot;) %&gt;%
+        mutate_if(is.character, as.factor)
+
+model_split &lt;- modified_master %&gt;%
+        initial_split(strata = average)
+        
+
+board_training &lt;- training(model_split)
+board_testing &lt;- testing(model_split)
+
+straps &lt;- vfold_cv(board_training, strata = average)
+straps</code></pre>
+<pre><code>## #  10-fold cross-validation using stratification 
+## # A tibble: 10 x 2
+##    splits               id    
+##    &lt;list&gt;               &lt;chr&gt; 
+##  1 &lt;split [14407/1602]&gt; Fold01
+##  2 &lt;split [14407/1602]&gt; Fold02
+##  3 &lt;split [14407/1602]&gt; Fold03
+##  4 &lt;split [14408/1601]&gt; Fold04
+##  5 &lt;split [14408/1601]&gt; Fold05
+##  6 &lt;split [14408/1601]&gt; Fold06
+##  7 &lt;split [14408/1601]&gt; Fold07
+##  8 &lt;split [14408/1601]&gt; Fold08
+##  9 &lt;split [14410/1599]&gt; Fold09
+## 10 &lt;split [14410/1599]&gt; Fold10</code></pre>
+<pre class="r"><code>boost_rec &lt;- recipe(average ~ ., data = board_training) %&gt;%
+        update_role(name, new_role = &#39;ID&#39;) %&gt;%
+        step_other(all_nominal_predictors(), threshold = 5) %&gt;%
+        step_dummy(all_nominal_predictors(), one_hot = TRUE) %&gt;%
+        step_normalize(all_numeric_predictors())
+
+prep(boost_rec)</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##         ID          1
+##    outcome          1
+##  predictor          9
+## 
+## Training data contained 16009 data points and no missing data.
+## 
+## Operations:
+## 
+## Collapsing factor levels for prim_cat, sec_cat, ter_cat [trained]
+## Dummy variables from prim_cat, sec_cat, ter_cat [trained]
+## Centering and scaling for minplayers, maxplayers, minplaytime, maxplaytim... [trained]</code></pre>
+<p>and the model specifications:</p>
+<pre class="r"><code>boost_spec &lt;- boost_tree(
+        mtry = tune(),
+        trees = tune(),
+        min_n = tune(),
+        loss_reduction = tune(),
+        learn_rate = tune()
+        ) %&gt;%
+        set_engine(&quot;xgboost&quot;) %&gt;%
+        set_mode(&quot;regression&quot;)
+
+boost_spec</code></pre>
+<pre><code>## Boosted Tree Model Specification (regression)
+## 
+## Main Arguments:
+##   mtry = tune()
+##   trees = tune()
+##   min_n = tune()
+##   learn_rate = tune()
+##   loss_reduction = tune()
+## 
+## Computational engine: xgboost</code></pre>
+<p>and combining them to a workflow:</p>
+<pre class="r"><code>boost_flow &lt;- workflow() %&gt;%
+        add_model(boost_spec) %&gt;%
+        add_recipe(boost_rec)
+
+boost_flow</code></pre>
+<pre><code>## == Workflow ====================================================================
+## Preprocessor: Recipe
+## Model: boost_tree()
+## 
+## -- Preprocessor ----------------------------------------------------------------
+## 3 Recipe Steps
+## 
+## * step_other()
+## * step_dummy()
+## * step_normalize()
+## 
+## -- Model -----------------------------------------------------------------------
+## Boosted Tree Model Specification (regression)
+## 
+## Main Arguments:
+##   mtry = tune()
+##   trees = tune()
+##   min_n = tune()
+##   learn_rate = tune()
+##   loss_reduction = tune()
+## 
+## Computational engine: xgboost</code></pre>
+<pre class="r"><code>library(finetune)
+
+race &lt;- tune_race_anova(
+        boost_flow, 
+        straps,
+        grid = 15,
+        metrics = metric_set(rmse),
+        control = control_race(verbose = TRUE))
+
+plot_race(race)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>final_flow &lt;- 
+        boost_flow %&gt;%
+        finalize_workflow(select_best(race, &#39;rmse&#39;)) %&gt;%
+        last_fit(model_split)
+
+collect_metrics(final_flow)</code></pre>
+<pre><code>## # A tibble: 2 x 4
+##   .metric .estimator .estimate .config             
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard       0.730 Preprocessor1_Model1
+## 2 rsq     standard       0.382 Preprocessor1_Model1</code></pre>
+<p>Let’s examine variable importance and how to interpret the variable importance.</p>
+<pre class="r"><code>library(vip)
+
+boost_fit &lt;- extract_fit_parsnip(final_flow)
+
+vip(boost_fit, geom = &quot;point&quot;) +
+        theme_economist()</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>As far as xgboost goes, this is probably as descriptive you need to explain the model to stakeholders. If your stakeholders need additional explanation, a less “black box” model like a descision tree or multinomial logisitic regression is probably a safer bet.</p>
+</div>
