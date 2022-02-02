@@ -1,0 +1,175 @@
+---
+title: '#tidytuesday, 2/1/2022, Dog Breeds'
+author: Eric Collins
+date: '2022-02-01'
+slug: []
+categories: 
+- tidytuesday
+tags:
+- data science
+- Data Analysis
+- tidy
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>First, dog tax:</p>
+<div class="figure">
+<img src="puppers_resize.jpg" alt="" />
+<p class="caption">Papi and Nana</p>
+</div>
+<p>Since last week we discussed interpreting a “black box” model like an XGBoost, I thought we could talk more about interpretability this week as well. Models have varying levels of interpretability and in some sense, all models are a black box to someone. To data scientists who (hopefully) know what’s going on behind the curtain, things aren’t so scary, but often stakeholders need to know how to act on the information that is gleaned from ML.</p>
+<p>All models exist on a spectrum of interpretability, and generally interpretability and accuracy are negatively correlated. Neural networks, with the right setup, can be astonishingly accurate. There’s videos all over Youtube of no-hidden-layer networks solving what most people would consider to be complex problem spaces, like playing Asteroids. But watching the model work and explaining what it means when a certain node outputs a certain value are two different things.</p>
+<p>I work in education. People want to know the relationships between things so they can act on it. If students are failing math at a particular school, they want a model to tell them why that may be the case, so they can make a plan to act on the information. Deploying a neural network would be an incredibly long uphill battle for me, since no one can “interpret” what each value at each node means at each layer.</p>
+<p>Since we used a black box last week, I thought it would be nice to break out old-faithful:</p>
+<p><em>Least Squares Linear Regression</em></p>
+<div id="eda" class="section level2">
+<h2>EDA</h2>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(ggthemes)
+library(ggnewscale)
+library(gganimate)
+library(ggrepel)
+library(shades)
+library(ggcorrplot)
+
+#tuesdata &lt;- tidytuesdayR::tt_load(&quot;2022-02-01&quot;) This kicked back an error for some reason. I downloaded the data manually. </code></pre>
+<pre class="r"><code>breeds &lt;- read_csv(&quot;breeds.csv&quot;) %&gt;%
+        janitor::clean_names() %&gt;%
+        select(-c(links, image))
+
+breeds_long &lt;- breeds %&gt;%
+        pivot_longer(cols = !breed, names_to = &quot;year&quot;, values_to = &quot;rank&quot;) %&gt;%
+        mutate(year = as.numeric(str_sub(year, start = 2, end = 5)))
+
+breeds_movement &lt;- breeds %&gt;%
+        drop_na() %&gt;%
+        mutate(movement = x2020_rank - x2013_rank)
+        
+breeds_low_move &lt;- breeds_movement %&gt;%
+        slice_max(order_by = movement, n = 5) %&gt;%
+        select(breed) %&gt;%
+        inner_join(breeds_long)
+
+breeds_high_move &lt;- breeds_movement %&gt;%
+        filter(sign(movement) == -1) %&gt;%
+        slice_min(order_by = movement, n = 5) %&gt;%
+        select(breed) %&gt;%
+        inner_join(breeds_long)</code></pre>
+<pre class="r"><code>ratings_over_time &lt;- ggplot(data = breeds_long, mapping = aes(x = year, y = rank, group = breed)) +
+        geom_point(alpha = .05) +
+        geom_line(alpha = .05) +
+        geom_point(data = breeds_low_move, mapping = aes(color = breed)) +
+        geom_line(data = breeds_low_move, mapping = aes(color = breed)) +
+        lightness(scale_color_brewer(&quot;Largest Decreases&quot;, palette = &quot;Blues&quot;, guide = guide_legend(order = 2)), scalefac(.55))  +
+        new_scale_color()+
+        geom_point(data = breeds_high_move, mapping = aes(color = breed)) +
+        geom_line(data = breeds_high_move, mapping = aes(color = breed)) +
+        lightness(scale_color_brewer(&quot;Largest Increases&quot;, palette = &quot;Reds&quot;, guide = guide_legend(order = 1)), scalefac(.55)) +
+        scale_y_reverse() +
+        labs(title = &quot;Breed Rankings Over Time (2013-2020)&quot;) +
+        xlab(&quot;Year&quot;) +
+        ylab(&quot;Rank&quot;) +
+        transition_reveal(along = year)
+        
+
+
+animate(ratings_over_time, renderer = gifski_renderer(), end_pause = 20)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-3-1.gif" style="display: block; margin: auto;" /></p>
+<p>It is interesting how certain breeds moved such large spaces over the past few years. The Labrador retriever has been dominant as the AKC’s number 1 best dog. I don’t pay any mind to dog rankings or anything. Some breeds are naturally better at some things than others, but I adopt all my dogs, so I don’t worry about that sort of thing.</p>
+<pre class="r"><code>traits &lt;- read_csv(&quot;traits.csv&quot;)
+
+traits_long &lt;- traits %&gt;%
+        select(-c(&#39;Coat Type&#39;, &#39;Coat Length&#39;)) %&gt;%
+        pivot_longer(cols = !Breed , names_to = &quot;characteristic&quot;, values_to = &quot;value&quot;)</code></pre>
+<pre class="r"><code>ggplot(data = traits_long, mapping = aes(x = value, fill = characteristic)) +
+        geom_density()+
+        theme(legend.position = &#39;none&#39;) +
+        facet_wrap(~characteristic)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Very few of these are actually centered around 3 and leaning one way or the other. Only barking, coat grooming, and shedding level appear to be somewhat balanced. It looks like the others are perpetually good for all dogs.</p>
+</div>
+<div id="model-building" class="section level2">
+<h2>Model Building</h2>
+<p>The goal is the most interpretable model possible. With that in mind, we aren’t going to preprocess our data at all, so that once the model is built we have a direct connection to the actual ranking.</p>
+<pre class="r"><code>traits &lt;- read_csv(&quot;traits.csv&quot;) %&gt;%
+        janitor::clean_names() %&gt;%
+        select(-c(coat_type, coat_length))
+
+ratings &lt;- read_csv(&quot;breeds.csv&quot;) %&gt;%
+        janitor::clean_names() %&gt;%
+        select(breed, rank = x2020_rank)</code></pre>
+<pre class="r"><code>cors &lt;- round(cor(traits %&gt;% select(-c(breed))), 1)
+sig &lt;- cor_pmat(traits %&gt;% select(-c(breed)))
+
+
+ggcorrplot(cors, outline.color = &#39;white&#39;, type = &#39;lower&#39;, p.mat = sig, color = c( &quot;#313695&quot;, &quot;white&quot;,&quot;#a50026&quot;))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>There are alot of correlated predictors though, so we will specify an interaction term between them.</p>
+<pre class="r"><code>master &lt;- inner_join(ratings, traits)
+
+dog_split &lt;- master %&gt;%
+        initial_split(strata = rank)
+
+
+dog_train &lt;- training(dog_split)
+dog_test &lt;- testing(dog_split)
+
+straps &lt;- bootstraps(dog_train, strata = rank)</code></pre>
+<pre class="r"><code>lm_rec &lt;- recipe(rank ~ . , data = dog_train) %&gt;%
+        update_role(breed, new_role = &quot;ID&quot;) %&gt;%
+        step_interact(all_numeric_predictors() ~ all_numeric_predictors())
+
+prep(lm_rec)</code></pre>
+<pre><code>## Recipe
+## 
+## Inputs:
+## 
+##       role #variables
+##         ID          1
+##    outcome          1
+##  predictor         14
+## 
+## Training data contained 36 data points and no missing data.
+## 
+## Operations:
+## 
+## Interactions with affectionate_with_family + good_with_young_children + good_with_other_dogs + shedding_level + coat_grooming_frequency + drooling_level + openness_to_strangers + playfulness_level + watchdog_protective_nature + adaptability_level + trainability_level + energy_level + barking_level + mental_stimulation_needs affectionate_with_family + good_with_young_children + good_with_other_dogs + shedding_level + coat_grooming_frequency + drooling_level + openness_to_strangers + playfulness_level + watchdog_protective_nature + adaptability_level + trainability_level + energy_level + barking_level + mental_stimulation_needs [trained]</code></pre>
+<pre class="r"><code>lm_spec &lt;- linear_reg() %&gt;%
+        set_engine(&quot;lm&quot;) %&gt;%
+        set_mode(&quot;regression&quot;)</code></pre>
+<pre class="r"><code>lm_flow &lt;- workflow() %&gt;%
+        add_recipe(lm_rec) %&gt;%
+        add_model(lm_spec)</code></pre>
+<pre class="r"><code>fit &lt;- fit_resamples(lm_flow, resamples = straps)
+collect_metrics(fit)</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##   .metric .estimator     mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   101.        25  8.84   Preprocessor1_Model1
+## 2 rsq     standard     0.0845    25  0.0151 Preprocessor1_Model1</code></pre>
+<p>Is it a good model? No, it isn’t. In fact it’s practically worthless, but it is highly interpretable.</p>
+<pre class="r"><code>lm_final_flow &lt;- lm_flow %&gt;%
+        finalize_workflow(select_best(fit, &#39;rmse&#39;)) %&gt;%
+        last_fit(dog_split)</code></pre>
+<pre class="r"><code>lm_eng &lt;- lm_final_flow %&gt;%
+        extract_fit_engine()
+
+lm_coeffs &lt;- tidy((lm_eng$coefficients)) %&gt;%
+        filter(names != &quot;(Intercept)&quot;)</code></pre>
+<pre class="r"><code>ggplot(data = lm_coeffs, mapping = aes(x = names, y = x, label = names))+
+        ggrepel::geom_text_repel() +
+        geom_hline(aes(yintercept = 0), color = &quot;midnightblue&quot;)+
+        theme(axis.text.x = element_blank(),
+              axis.title.x = element_blank(),
+              axis.ticks.x = element_blank()) +
+        labs(title = &quot;Coefficients&quot;) +
+        ylab(&quot;Variable Coefficient&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>A dog being trainable, affectionate, good with children and open to strangers are all things that increase their ranking. A dog being too playful, drooling, and requiring too much mental stimulation are things that negatively impact the ranking, which all make sense.</p>
+</div>

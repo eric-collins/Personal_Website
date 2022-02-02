@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Data Analysis on Hi, I&#39;m Eric</title>
-    <link>https://ericcollins.info/tags/data-analysis/</link>
-    <description>Recent content in Data Analysis on Hi, I&#39;m Eric</description>
+    <title>tidy on Hi, I&#39;m Eric</title>
+    <link>https://ericcollins.info/tags/tidy/</link>
+    <description>Recent content in tidy on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Tue, 01 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/tags/data-analysis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 01 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/tags/tidy/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>#tidytuesday, 2/1/2022, Dog Breeds</title>
       <link>https://ericcollins.info/blog/2022-02-01-tidytuesday-2-1-2022-dog-breeds/</link>
@@ -26,16 +26,6 @@ Papi and Nana
       <guid>https://ericcollins.info/blog/2022-01-29-tidytuesday-1-29-2022-board-games/</guid>
       <description>Like any good nerd, I enjoy a good game. Games have rules, and learning to navigate and bend rules are what good data scientists are always trying to do. We try to take advantages of the way natural systems are built to model them in the most effective way possible. So when I saw this weeks tidy tuesday dataset, I was stoked.
 First, a tad of exploratory analysis.</description>
-    </item>
-    
-    <item>
-      <title>Not So Standard Analysis</title>
-      <link>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</link>
-      <pubDate>Fri, 12 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</guid>
-      <description>I was listening to another podcast (Your Mom’s House), and another Eric, (who also happens to be another public-education data analyst) submitted an analysis of the episodes using transcripts of the episode. I wanted to add some language processing to my repertoire, so I decided to perform a similar analysis for my favorite podcast, Not-so-Standard Deviations.
-As previously mentioned, I borrowed heavily from Eric Ekholme’s analysis of Your Mom’s House, which can be found at his website.</description>
     </item>
     
   </channel>

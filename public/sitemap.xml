@@ -2,6 +2,39 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://ericcollins.info/blog/2022-02-01-tidytuesday-2-1-2022-dog-breeds/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/blog/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/categories/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/data-analysis/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/data-science/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/tidy/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/categories/tidytuesday/</loc>
+    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/blog/2022-01-29-tidytuesday-1-29-2022-board-games/</loc>
+    <lastmod>2022-01-29T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/data/</loc>
+    <lastmod>2022-01-29T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://ericcollins.info/about/</loc>
     <lastmod>2022-01-22T00:00:00+00:00</lastmod>
   </url><url>
@@ -11,23 +44,8 @@
     <loc>https://ericcollins.info/categories/about/</loc>
     <lastmod>2022-01-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ericcollins.info/categories/</loc>
-    <lastmod>2022-01-22T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/</loc>
-    <lastmod>2022-01-22T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/tags/</loc>
-    <lastmod>2022-01-22T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://ericcollins.info/blog/2022-01-29-tidy-tuesday-1182022/</loc>
     <lastmod>2022-01-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/blog/</loc>
-    <lastmod>2022-01-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/tags/data-analysis/</loc>
-    <lastmod>2021-11-12T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</loc>
     <lastmod>2021-11-12T00:00:00+00:00</lastmod>
