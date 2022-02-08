@@ -92,18 +92,19 @@ breeds_high_move <- breeds_movement %>%
 ratings_over_time <- ggplot(data = breeds_long, mapping = aes(x = year, y = rank, group = breed)) +
         geom_point(alpha = .05) +
         geom_line(alpha = .05) +
-        geom_point(data = breeds_high_move, mapping = aes(color = breed)) +
-        geom_line(data = breeds_high_move, mapping = aes(color = breed)) +
-        lightness(scale_color_brewer("Largest Increases", palette = "Reds"), scalefac(.55)) +
-        new_scale_color()+
         geom_point(data = breeds_low_move, mapping = aes(color = breed)) +
         geom_line(data = breeds_low_move, mapping = aes(color = breed)) +
-        lightness(scale_color_brewer("Largest Decreases", palette = "Blues"), scalefac(.55))  +
+        lightness(scale_color_brewer("Largest Decreases", palette = "Blues", guide = guide_legend(order = 2)), scalefac(.55))  +
+        new_scale_color()+
+        geom_point(data = breeds_high_move, mapping = aes(color = breed)) +
+        geom_line(data = breeds_high_move, mapping = aes(color = breed)) +
+        lightness(scale_color_brewer("Largest Increases", palette = "Reds", guide = guide_legend(order = 1)), scalefac(.55)) +
         scale_y_reverse() +
         labs(title = "Breed Rankings Over Time (2013-2020)") +
         xlab("Year") +
         ylab("Rank") +
         transition_reveal(along = year)
+        
 
 
 animate(ratings_over_time, renderer = gifski_renderer(), end_pause = 20)

@@ -105,12 +105,12 @@ breeds_movement &lt;- breeds %&gt;%
         drop_na() %&gt;%
         mutate(movement = x2020_rank - x2013_rank)
         
-breeds_high_move &lt;- breeds_movement %&gt;%
+breeds_low_move &lt;- breeds_movement %&gt;%
         slice_max(order_by = movement, n = 5) %&gt;%
         select(breed) %&gt;%
         inner_join(breeds_long)
 
-breeds_low_move &lt;- breeds_movement %&gt;%
+breeds_high_move &lt;- breeds_movement %&gt;%
         filter(sign(movement) == -1) %&gt;%
         slice_min(order_by = movement, n = 5) %&gt;%
         select(breed) %&gt;%
@@ -118,18 +118,19 @@ breeds_low_move &lt;- breeds_movement %&gt;%
 <pre class="r"><code>ratings_over_time &lt;- ggplot(data = breeds_long, mapping = aes(x = year, y = rank, group = breed)) +
         geom_point(alpha = .05) +
         geom_line(alpha = .05) +
-        geom_point(data = breeds_high_move, mapping = aes(color = breed)) +
-        geom_line(data = breeds_high_move, mapping = aes(color = breed)) +
-        lightness(scale_color_brewer(&quot;Largest Decreases&quot;, palette = &quot;Blues&quot;), scalefac(.55))  +
-        new_scale_color()+
         geom_point(data = breeds_low_move, mapping = aes(color = breed)) +
         geom_line(data = breeds_low_move, mapping = aes(color = breed)) +
-        lightness(scale_color_brewer(&quot;Largest Increases&quot;, palette = &quot;Reds&quot;), scalefac(.55)) +
+        lightness(scale_color_brewer(&quot;Largest Decreases&quot;, palette = &quot;Blues&quot;, guide = guide_legend(order = 2)), scalefac(.55))  +
+        new_scale_color()+
+        geom_point(data = breeds_high_move, mapping = aes(color = breed)) +
+        geom_line(data = breeds_high_move, mapping = aes(color = breed)) +
+        lightness(scale_color_brewer(&quot;Largest Increases&quot;, palette = &quot;Reds&quot;, guide = guide_legend(order = 1)), scalefac(.55)) +
         scale_y_reverse() +
         labs(title = &quot;Breed Rankings Over Time (2013-2020)&quot;) +
         xlab(&quot;Year&quot;) +
         ylab(&quot;Rank&quot;) +
         transition_reveal(along = year)
+        
 
 
 animate(ratings_over_time, renderer = gifski_renderer(), end_pause = 20)</code></pre>
@@ -202,10 +203,10 @@ prep(lm_rec)</code></pre>
 <pre class="r"><code>fit &lt;- fit_resamples(lm_flow, resamples = straps)
 collect_metrics(fit)</code></pre>
 <pre><code>## # A tibble: 2 x 6
-##   .metric .estimator   mean     n std_err .config             
-##   &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
-## 1 rmse    standard   97.2      25  5.13   Preprocessor1_Model1
-## 2 rsq     standard    0.136    25  0.0264 Preprocessor1_Model1</code></pre>
+##   .metric .estimator     mean     n std_err .config             
+##   &lt;chr&gt;   &lt;chr&gt;         &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;               
+## 1 rmse    standard   101.        25  8.84   Preprocessor1_Model1
+## 2 rsq     standard     0.0845    25  0.0151 Preprocessor1_Model1</code></pre>
 <p>Is it a good model? No, it isn’t. In fact it’s practically worthless, but it is highly interpretable.</p>
 <pre class="r"><code>lm_final_flow &lt;- lm_flow %&gt;%
         finalize_workflow(select_best(fit, &#39;rmse&#39;)) %&gt;%
