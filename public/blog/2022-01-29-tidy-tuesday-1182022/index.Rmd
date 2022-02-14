@@ -7,7 +7,7 @@ categories: []
 tags: []
 ---
 
-In my household, we go through a lot of chocolate. Having a pregnant wife severely increases the amount of sweets in the house, and sympathy weight gain is very real. This weeks Tidy Tuesday has man interesting features. Let's start exploring. 
+In my household, we go through a lot of chocolate. Having a pregnant wife severely increases the amount of sweets in the house, and sympathy weight gain is very real. This weeks Tidy Tuesday has many interesting features. Let's start exploring. 
 
 
 ```{r Loading Data}

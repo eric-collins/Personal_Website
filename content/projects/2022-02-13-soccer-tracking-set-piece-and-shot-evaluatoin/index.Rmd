@@ -1,0 +1,21 @@
+---
+title: Soccer Tracking-Set Piece and Shot Evaluation
+author: Eric Collins
+date: '2022-02-13'
+slug: []
+categories:
+  - projects
+tags:
+  - Data Analysis
+  - data science
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+The app can be found [here](https://eric-collins.shinyapps.io/SetPieceAnalysis/?_ga=2.128983116.1722490299.1644791912-1683136978.1644261128).
+
+The github repo can be found [here](https://github.com/eric-collins/SoccerSetPieceAnalysis).
+
+
+Thank you!
