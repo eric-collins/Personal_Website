@@ -6,11 +6,11 @@
     <description>Recent content in Tags on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 07 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 13 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Data Analysis</title>
       <link>https://ericcollins.info/tags/data-analysis/</link>
-      <pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
       
       <guid>https://ericcollins.info/tags/data-analysis/</guid>
       <description></description>
@@ -19,9 +19,27 @@
     <item>
       <title>data science</title>
       <link>https://ericcollins.info/tags/data-science/</link>
-      <pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
       
       <guid>https://ericcollins.info/tags/data-science/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Mario Kart</title>
+      <link>https://ericcollins.info/tags/mario-kart/</link>
+      <pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/tags/mario-kart/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Optimization</title>
+      <link>https://ericcollins.info/tags/optimization/</link>
+      <pubDate>Mon, 07 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/tags/optimization/</guid>
       <description></description>
     </item>
     

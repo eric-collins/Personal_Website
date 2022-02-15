@@ -6,7 +6,18 @@
     <description>Recent content in data science on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 07 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/tags/data-science/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 13 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/tags/data-science/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Soccer Tracking-Set Piece and Shot Evaluation</title>
+      <link>https://ericcollins.info/projects/2022-02-13-soccer-tracking-set-piece-and-shot-evaluatoin/</link>
+      <pubDate>Sun, 13 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/projects/2022-02-13-soccer-tracking-set-piece-and-shot-evaluatoin/</guid>
+      <description>The app can be found here.
+The github repo can be found here.
+Thank you!</description>
+    </item>
+    
     <item>
       <title>Mario Kart 8 Deluxe Build Optimizer</title>
       <link>https://ericcollins.info/projects/2022-02-07-mario-kart-8-dashboard/</link>

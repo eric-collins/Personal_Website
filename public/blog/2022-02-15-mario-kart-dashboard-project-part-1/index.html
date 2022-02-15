@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Blog of Eric Collins">
+<meta name="keywords" content="blog, data, data science, analysis, data analysis">
+
+<title>
+  Hi, I&#39;m Eric - Mario Kart Dashboard Project Part 1 
+</title>
+
+<meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Roboto+Slab:wght@400;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<link rel="stylesheet" href="https://ericcollins.info/css/main.css">
+<link rel="stylesheet" href="https://ericcollins.info/css/custom.css">
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="text-left title">
+  <h1 class="title">Mario Kart Dashboard Project Part 1</h1>
+</header>
+<section id="category-pane" class="meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON FEB 7, 2022 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="">
+  <div class="col-md-12 text-justify content">
+    
+    
+    
+    
+<script src="https://ericcollins.info/blog/2022-02-15-mario-kart-dashboard-project-part-1/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I was watching Youtube videos (as I am doing so often), and came across <a href="https://www.youtube.com/watch?v=xo-Qt2mkjQs&amp;t=486s">this</a> video from a relatively small Mario Kart Youtuber named Bayesic. He describes in great detail how player stats in Mario Kart 8 Deluxe are calculated and used in game, and how to optimize a build and strategy through the lens of Pareto optimality. He builds a dashboard to optimize any given set of stats. I thought that was a great idea, and sounded like a good way to learn web scraping as well as a new (to me) shiny framework called shinydashboards.</p>
+<p>To start with, let’s pull the tables from the internet. The website can be found <a href="https://www.mariowiki.com/Mario_Kart_8_Deluxe_in-game_statistics">here</a></p>
+<p>I’ll be using the rvest package to translate the html into tables that can be saved into a feather.</p>
+<pre class="r"><code>library(rvest)</code></pre>
+<pre><code>## Warning: package &#39;rvest&#39; was built under R version 4.1.2</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.2.0     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter()         masks stats::filter()
+## x readr::guess_encoding() masks rvest::guess_encoding()
+## x dplyr::lag()            masks stats::lag()</code></pre>
+<pre class="r"><code>library(janitor)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;janitor&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     chisq.test, fisher.test</code></pre>
+<pre class="r"><code>library(feather)</code></pre>
+<pre><code>## Warning: package &#39;feather&#39; was built under R version 4.1.2</code></pre>
+<pre class="r"><code>url &lt;- &quot;https://www.mariowiki.com/Mario_Kart_8_Deluxe_in-game_statistics&quot;
+
+kart_page &lt;- read_html(url)
+
+str(kart_page)</code></pre>
+<pre><code>## List of 2
+##  $ node:&lt;externalptr&gt; 
+##  $ doc :&lt;externalptr&gt; 
+##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;xml_document&quot; &quot;xml_node&quot;</code></pre>
+<p>The rvest package uses node syntax to describe what’s happening inside the html. To get deeper into the html, keep calling html_children</p>
+<pre class="r"><code>nodes &lt;- kart_page %&gt;%
+        html_elements(&quot;body&quot;) %&gt;%
+        html_children()
+
+nodes %&gt;%
+        html_children()</code></pre>
+<pre><code>## {xml_nodeset (4)}
+## [1] &lt;div id=&quot;column-content&quot;&gt;\n&lt;div id=&quot;content&quot; class=&quot;mw-body&quot; role=&quot;main&quot;&gt; ...
+## [2] &lt;div id=&quot;column-one&quot; lang=&quot;en&quot; dir=&quot;ltr&quot;&gt;\n&lt;h2&gt;Navigation menu&lt;/h2&gt;\n&lt;div ...
+## [3] &lt;div class=&quot;visualClear&quot;&gt;&lt;/div&gt;\n
+## [4] &lt;div id=&quot;footer&quot; class=&quot;mw-footer&quot; role=&quot;contentinfo&quot; lang=&quot;en&quot; dir=&quot;ltr&quot; ...</code></pre>
+<p>The tables come out not very pretty. With some custom functions and lapply, we can change that.</p>
+<pre class="r"><code>kart_tables &lt;- kart_page %&gt;%
+        html_table(fill = TRUE)
+
+kart_tables1 &lt;- kart_tables[c(2:10)]
+kart_tables2 &lt;- kart_tables[c(11:12)]
+
+fix_names_1 &lt;- function(x){
+        new_x &lt;- x %&gt;%
+                row_to_names(row_number = 1) %&gt;%
+                clean_names()
+        
+        dont &lt;- names(new_x)[1]
+        
+        new_x &lt;- new_x %&gt;%
+                mutate(across(!dont, as.numeric))
+}
+
+fix_names_2 &lt;- function(x){
+        new_x &lt;- x %&gt;%
+                row_to_names(row_number = 2) %&gt;%
+                clean_names()
+        
+        dont &lt;- names(new_x)[1]
+        
+        new_x &lt;- new_x %&gt;%
+                mutate(across(!dont, as.numeric))
+}
+
+kart_tables_fixed1 &lt;- lapply(kart_tables1, fix_names_1)</code></pre>
+<pre><code>## Note: Using an external vector in selections is ambiguous.
+## i Use `all_of(dont)` instead of `dont` to silence this message.
+## i See &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.
+## This message is displayed once per session.</code></pre>
+<pre><code>## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion
+
+## Warning in mask$eval_all_mutate(quo): NAs introduced by coercion</code></pre>
+<pre><code>## Warning in row_to_names(., row_number = 1): Row 1 does not provide unique names.
+## Consider running clean_names() after row_to_names().</code></pre>
+<pre class="r"><code>kart_tables_fixed2 &lt;- lapply(kart_tables2, fix_names_2)</code></pre>
+<pre><code>## Warning in row_to_names(., row_number = 2): Row 2 does not provide unique names.
+## Consider running clean_names() after row_to_names().</code></pre>
+<pre class="r"><code>kart_tables_fixed &lt;- append(kart_tables_fixed1, kart_tables_fixed2)</code></pre>
+<p>we can’t tibble a list, but we can tibble a dataframe from a list. They are then written to csv and feather, for data longetivity and for fastest loading speed.</p>
+<pre class="r"><code>karts &lt;- as_tibble(as.data.frame(kart_tables_fixed[1]))
+characters &lt;- as_tibble(as.data.frame(kart_tables_fixed[2]))
+tires &lt;- as_tibble(as.data.frame(kart_tables_fixed[3]))
+gliders &lt;- as_tibble(as.data.frame(kart_tables_fixed[4]))
+kart_mass &lt;- as_tibble(as.data.frame(kart_tables_fixed[5]))
+acceleration &lt;- as_tibble(as.data.frame(kart_tables_fixed[6]))
+slip &lt;- as_tibble(as.data.frame(kart_tables_fixed[7]))
+offroad_brake &lt;- as_tibble(as.data.frame(kart_tables[9])) %&gt;%
+        slice(1:22) %&gt;%
+        row_to_names(row_number = 1) %&gt;%
+        clean_names()
+        
+offroad_slip &lt;- as_tibble(as.data.frame(kart_tables[9])) %&gt;%
+        slice(23:45) %&gt;%
+        row_to_names(row_number = 1) %&gt;%
+        clean_names() 
+
+boost &lt;- as_tibble(as.data.frame(kart_tables_fixed[9]))
+speed &lt;- as_tibble(as.data.frame(kart_tables_fixed[10]))
+handling &lt;- as_tibble(as.data.frame(kart_tables_fixed[11]))
+
+
+write_csv(karts, &quot;karts.csv&quot;)
+write_csv(characters, &quot;characters.csv&quot;)
+write_csv(tires, &quot;tires.csv&quot;)
+write_csv(gliders, &quot;gliders.csv&quot;)
+write_csv(kart_mass, &quot;kart_mass.csv&quot;)
+write_csv(acceleration, &quot;acceleration.csv&quot;)
+write_csv(slip, &quot;slip.csv&quot;)
+write_csv(offroad_brake, &quot;offroad_brake.csv&quot;)
+write_csv(offroad_slip, &quot;offroad_slip.csv&quot;)
+write_csv(boost, &quot;boost.csv&quot;)
+write_csv(speed, &quot;speed.csv&quot;)
+write_csv(handling, &quot;handling.csv&quot;)
+
+
+
+write_feather(karts, &quot;karts.feather&quot;)
+write_feather(characters, &quot;characters.feather&quot;)
+write_feather(tires, &quot;tires.feather&quot;)
+write_feather(gliders, &quot;gliders.feather&quot;)
+write_feather(kart_mass, &quot;kart_mass.feather&quot;)
+write_feather(acceleration, &quot;acceleration.feather&quot;)
+write_feather(slip, &quot;slip.feather&quot;)
+write_feather(offroad_brake, &quot;offroad_brake.feather&quot;)
+write_feather(offroad_slip, &quot;offroad_slip.feather&quot;)
+write_feather(boost, &quot;boost.feather&quot;)
+write_feather(speed, &quot;speed.feather&quot;)
+write_feather(handling, &quot;handling.feather&quot;)</code></pre>
+<p>I’m posting this from the future.</p>
+<p>The app can be found <a href="https://eric-collins.shinyapps.io/MarioKartBuilder/?_ga=2.256633611.166118430.1644261128-1683136978.1644261128">here</a>.</p>
+<p>The github repo can be found <a href="https://github.com/eric-collins/MK8D_Stat_Optimizer">here</a>.</p>
+
+  </div>
+</section>
+<section id="tag-pane" class="meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      TAGS:
+      
+      
+      <a class="meta" href="/tags/data-analysis">DATA ANALYSIS</a>, 
+      
+      <a class="meta" href="/tags/mario-kart">MARIO KART</a>, 
+      
+      <a class="meta" href="/tags/optimization">OPTIMIZATION</a>
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<section id="menu-pane" class="menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://ericcollins.info/blog/2022-02-01-tidytuesday-2-1-2022-dog-breeds/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://ericcollins.info">home</a></h4>
+</section>
+
+
+
+<footer class="text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Eric Collins. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo  v0.92.0</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+      
+      <h6><a href="" aria-label="RSS Feed"><i class="fas fa-rss" aria-hidden="true"></i></a></h6>
+    
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/custom.js"></script>
+</body>
+</html>
+
+

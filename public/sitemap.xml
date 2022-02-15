@@ -3,33 +3,45 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://ericcollins.info/categories/</loc>
-    <lastmod>2022-02-07T00:00:00+00:00</lastmod>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/tags/data-analysis/</loc>
-    <lastmod>2022-02-07T00:00:00+00:00</lastmod>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/tags/data-science/</loc>
-    <lastmod>2022-02-07T00:00:00+00:00</lastmod>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/</loc>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/projects/</loc>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/categories/projects/</loc>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/projects/2022-02-13-soccer-tracking-set-piece-and-shot-evaluatoin/</loc>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/</loc>
+    <lastmod>2022-02-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/blog/</loc>
+    <lastmod>2022-02-07T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/tags/mario-kart/</loc>
     <lastmod>2022-02-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/projects/2022-02-07-mario-kart-8-dashboard/</loc>
     <lastmod>2022-02-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ericcollins.info/projects/</loc>
+    <loc>https://ericcollins.info/blog/2022-02-15-mario-kart-dashboard-project-part-1/</loc>
     <lastmod>2022-02-07T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ericcollins.info/categories/projects/</loc>
-    <lastmod>2022-02-07T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/tags/</loc>
+    <loc>https://ericcollins.info/tags/optimization/</loc>
     <lastmod>2022-02-07T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/blog/2022-02-01-tidytuesday-2-1-2022-dog-breeds/</loc>
-    <lastmod>2022-02-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/blog/</loc>
     <lastmod>2022-02-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/tags/tidy/</loc>
