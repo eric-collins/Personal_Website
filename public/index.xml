@@ -6,7 +6,31 @@
     <description>Recent content on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 13 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 24 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>#tidytuesday 2-22-22, The Freedom index and misleading visualization</title>
+      <link>https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/</link>
+      <pubDate>Thu, 24 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/</guid>
+      <description>This weeks tidy tuesday includes the dataset of the Freedom index produced by the Freedom House and the UN.
+One of the included visualizations kind of struck me the wrong way.
+Included Visualization
+The y axis only goes from 85 to 100, and tells the story about how the United States’ freedom is very quickly eroding. While this does tell a story, it certaintly isn’t the entire story.</description>
+    </item>
+    
+    <item>
+      <title>#tidyTuesday 2/15/2022, W.E.B Dubois Challenge</title>
+      <link>https://ericcollins.info/blog/2022-02-15-tidytuesday-2-15-2022/</link>
+      <pubDate>Tue, 15 Feb 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/blog/2022-02-15-tidytuesday-2-15-2022/</guid>
+      <description>For this tidy tuesday, the challenge is to recreate an original data visualization from W.E.B Du Bois. I thought I would walk through my process for recreating Challenge 2.
+Here is the goal:
+Original
+library(curl)library(tidyverse)library(ggtext)sysfonts::font_add_google(name = &amp;quot;Public Sans&amp;quot;, &amp;quot;Public&amp;quot;)showtext::showtext_auto()data &amp;lt;- read_csv(&amp;quot;https://raw.githubusercontent.com/ajstarks/dubois-data-portraits/master/challenge/2022/challenge05/data.csv&amp;quot;) %&amp;gt;%janitor::clean_names()ggplot(data = data, mapping = aes(x = free, y = year))+geom_point()+xlim(0, 3)So the goal will eventually be shade both halfs of graph using a polygon, but we need to get everything set up first.</description>
+    </item>
+    
     <item>
       <title>Soccer Tracking-Set Piece and Shot Evaluation</title>
       <link>https://ericcollins.info/projects/2022-02-13-soccer-tracking-set-piece-and-shot-evaluatoin/</link>

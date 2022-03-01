@@ -1,0 +1,273 @@
+---
+title: '#tidytuesday 2/22/22, The Freedom index and misleading visualization'
+author: 'Eric Collins'
+date: '2022-02-24'
+slug: []
+categories:
+  - tidytuesday
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This weeks tidy tuesday includes the dataset of the Freedom index produced by the Freedom House and the UN.</p>
+<p>One of the included visualizations kind of struck me the wrong way.</p>
+<div class="figure">
+<img src="pic1.png" alt="" />
+<p class="caption">Included Visualization</p>
+</div>
+<p>The y axis only goes from 85 to 100, and tells the story about how the United States’ freedom is very quickly eroding. While this does tell a story, it certaintly isn’t the entire story.</p>
+<pre class="r"><code>library(tidyverse)
+library(ggthemes)</code></pre>
+<pre class="r"><code>data &lt;- tidytuesdayR::tt_load(&quot;2022-02-22&quot;)</code></pre>
+<pre><code>## 
+##  Downloading file 1 of 1: `freedom.csv`</code></pre>
+<p>variable class description
+country character Country Name
+year double Year
+CL double Civil Liberties
+PR double Political rights
+Status character Status (Free F, Not Free NF, Partially Free PF)
+Region_Code double UN Region code
+Region_Name character UN Region Name
+is_ldc double Is a least developed country (binary 0/1)</p>
+<pre class="r"><code>new_data &lt;- data[[1]]
+
+skimr::skim(new_data)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-4">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">new_data</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">4979</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">8</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">country</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">52</td>
+<td align="right">0</td>
+<td align="right">193</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">Status</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">Region_Name</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2007.56</td>
+<td align="right">7.49</td>
+<td align="right">1995</td>
+<td align="right">2001</td>
+<td align="right">2008</td>
+<td align="right">2014</td>
+<td align="right">2020</td>
+<td align="left">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td align="left">CL</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3.37</td>
+<td align="right">1.87</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">5</td>
+<td align="right">7</td>
+<td align="left">▇▃▃▃▃</td>
+</tr>
+<tr class="odd">
+<td align="left">PR</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3.41</td>
+<td align="right">2.18</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">6</td>
+<td align="right">7</td>
+<td align="left">▇▂▂▂▅</td>
+</tr>
+<tr class="even">
+<td align="left">Region_Code</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">72.53</td>
+<td align="right">68.64</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">19</td>
+<td align="right">142</td>
+<td align="right">150</td>
+<td align="left">▇▁▁▁▇</td>
+</tr>
+<tr class="odd">
+<td align="left">is_ldc</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.24</td>
+<td align="right">0.42</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">▇▁▁▁▂</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>library(cowplot)
+
+
+mean_freedoms &lt;- new_data %&gt;%
+        group_by(year) %&gt;%
+        summarise(civil_liberties = mean(CL), political_rights = mean(PR)) %&gt;%
+        pivot_longer(cols = c(civil_liberties, political_rights), names_to = &quot;measure&quot;, values_to = &quot;value&quot;) %&gt;%
+        filter(year &gt;= 2008)
+
+
+plt1 &lt;- ggplot(data = mean_freedoms) +
+        geom_line(mapping = aes(x = year, y = value, color = measure)) +
+        scale_y_reverse()+
+        scale_x_continuous(breaks = seq(min(mean_freedoms$year), max(mean_freedoms$year), by = 1))
+
+plt2 &lt;- ggplot(data = mean_freedoms) +
+        geom_line(mapping = aes(x = year, y = value, color = measure)) +
+        scale_y_reverse() +
+        scale_x_continuous(breaks = seq(min(mean_freedoms$year), max(mean_freedoms$year), by = 1))+
+        ylim(7, 1)
+
+cowplot::plot_grid(plt1, plt2, nrow = 2, ncol = 1)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Compare the top graph, where the y axis limits were auto-applied by ggplot2, and the bottom graph, where the entire range is represented.</p>
+<p>The top graph paints a disturbing picture. Civil liberties and political rights are tanking! We need immediate intervention! However, the bottom graph paints the fuller picture. Civil liberties and political rights are falling, however the progression is much slower. Something should be done, but we may have some more time to do something about it.</p>
+<p>So now, the goal is simple: let’s replicate the original graph with appropriate axis, with the data we have.</p>
+<pre class="r"><code>us &lt;- new_data %&gt;%
+        filter(country == &quot;United States of America&quot;) %&gt;%
+        group_by(year) %&gt;%
+        summarise(&quot;Civil Liberties&quot; = mean(CL), &quot;Political Rights&quot; = mean(PR)) %&gt;%
+        pivot_longer(cols = c(&quot;Civil Liberties&quot;, &quot;Political Rights&quot;), names_to = &quot;measure&quot;, values_to = &quot;value&quot;) %&gt;%
+        filter(year &gt;= 2008)
+
+
+
+ggplot(data = us)+
+        geom_line(mapping = aes(x = year, y = value, color = measure), size = 3) +
+        scale_y_reverse(breaks = seq(1, 7, by = 1), labels = seq(1, 7, by = 1)) +
+        scale_x_continuous(breaks = seq(min(us$year), max(us$year), by = 2))+
+        theme_economist()+
+        scale_color_economist(&quot;Measure&quot;)+
+        labs(title = &quot;Trajectory of the United States&quot;)+
+        xlab(&quot;&quot;)+
+        ylab(&quot;Freedom Score&quot;)+
+        theme(axis.title.y = element_text(vjust = 3))</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>This is again, misleading. Let’s fix the y axis.</p>
+<pre class="r"><code>ggplot(data = us)+
+        geom_line(mapping = aes(x = year, y = value, color = measure), size = 3) +
+        scale_y_reverse(breaks = seq(1, 7, by = 1), labels = seq(1, 7, by = 1)) +
+        scale_x_continuous(breaks = seq(min(us$year), max(us$year), by = 2))+
+        theme_economist()+
+        scale_color_economist(&quot;Measure&quot;)+
+        labs(title = &quot;Trajectory of the United States&quot;)+
+        xlab(&quot;&quot;)+
+        ylab(&quot;Freedom Score&quot;)+
+        theme(axis.title.y = element_text(vjust = 3))+
+        ylim(7, 1)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>As we can see, the freedom is dropping, but not tanking.</p>

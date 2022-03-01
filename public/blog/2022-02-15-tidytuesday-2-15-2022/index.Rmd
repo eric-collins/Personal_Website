@@ -1,12 +1,12 @@
 ---
-title: '#tidyTuesday 2-15-2022'
+title: '#tidyTuesday 2/15/2022, W.E.B Dubois Challenge'
 author: Eric Collins
 date: '2022-02-15'
 slug: []
 categories: []
-tags: 
+tags: []
 comments: no
-showcomments: yes
+showcomments: no
 showpagemeta: yes
 ---
 ```{r setup, echo = FALSE}
@@ -19,6 +19,8 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 For this tidy tuesday, the challenge is to recreate an original data visualization from W.E.B Du Bois. I thought I would walk through my process for recreating Challenge 2.
 
 Here is the goal:
+
+![Original](./original-plate-12.jpg)
 
 
 ```{r}
@@ -142,7 +144,7 @@ ggplot(data = data, mapping = aes(x = free, y = year))+
 
 And with a few final changes to color, we have a finished product!
 
-```{r}
+```{r, fig.width= 4, fig.height = 8}
 
 ggplot(data = data, mapping = aes(x = free, y = year))+
         geom_point()+
@@ -160,18 +162,14 @@ ggplot(data = data, mapping = aes(x = free, y = year))+
               axis.ticks.y = element_blank(),
               axis.title.y = element_blank(),
               axis.title.x.top = element_blank(),
-              axis.text.x.top = element_text(size = 5),
-              axis.text.y.right = element_text(size = 5),
-              axis.text.y.left = element_text(size = 8),
-              plot.subtitle = element_markdown(hjust = 1, vjust = 2, size = 5),
-              plot.title = element_markdown(hjust = .45, size = 10, family = "Public"),
+              axis.text.x.top = element_text(size = 15),
+              axis.text.y.right = element_text(size = 15),
+              axis.text.y.left = element_text(size = 18),
+              plot.subtitle = element_markdown(hjust = 1, vjust = 2, size = 15),
+              plot.title = element_markdown(hjust = .45, size = 20, family = "Public"),
               plot.background = element_rect(color = "#e1d2c1", fill = "#e1d2c1"))
         
 
 ```      
 
-
-
-
-![Original]("C:/Users/emcollin/OneDrive - Volusia County Schools/Desktop/Website/Personal_Website/content/blog/2022-02-15-tidytuesday-2-15-2022/original-plate-12.jpg")
-
+![Original](./original-plate-12.jpg)
