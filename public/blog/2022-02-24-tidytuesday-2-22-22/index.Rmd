@@ -1,5 +1,5 @@
 ---
-title: '#tidytuesday 2-22-22, The Freedom index and misleading visualization'
+title: '#tidytuesday 2/22/22, The Freedom index and misleading visualization'
 author: 'Eric Collins'
 date: '2022-02-24'
 slug: []
@@ -11,13 +11,18 @@ showcomments: yes
 showpagemeta: yes
 ---
 
+```{r, echo = F}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+
 This weeks tidy tuesday includes the dataset of the Freedom index produced by the Freedom House and the UN. 
 
 
 One of the included visualizations kind of struck me the wrong way. 
 
 
-[Included Visualization](./pic1.png)
+![Included Visualization](./pic1.png)
 
 
 
@@ -106,7 +111,7 @@ us <- new_data %>%
 
 
 ggplot(data = us)+
-        geom_line(mapping = aes(x = year, y = value, color = measure)) +
+        geom_line(mapping = aes(x = year, y = value, color = measure), size = 3) +
         scale_y_reverse(breaks = seq(1, 7, by = 1), labels = seq(1, 7, by = 1)) +
         scale_x_continuous(breaks = seq(min(us$year), max(us$year), by = 2))+
         theme_economist()+
@@ -127,7 +132,7 @@ This is again, misleading. Let's fix the y axis.
 
 ```{r}
 ggplot(data = us)+
-        geom_line(mapping = aes(x = year, y = value, color = measure)) +
+        geom_line(mapping = aes(x = year, y = value, color = measure), size = 3) +
         scale_y_reverse(breaks = seq(1, 7, by = 1), labels = seq(1, 7, by = 1)) +
         scale_x_continuous(breaks = seq(min(us$year), max(us$year), by = 2))+
         theme_economist()+

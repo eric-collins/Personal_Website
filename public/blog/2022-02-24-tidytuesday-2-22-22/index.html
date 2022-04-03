@@ -10,7 +10,7 @@
 <meta name="keywords" content="blog, data, data science, analysis, data analysis">
 
 <title>
-  Hi, I&#39;m Eric - #tidytuesday 2-22-22, The Freedom index and misleading visualization 
+  Hi, I&#39;m Eric - #tidytuesday 2/22/22, The Freedom index and misleading visualization 
 </title>
 
 <meta name="generator" content="Hugo 0.92.0" />
@@ -41,7 +41,7 @@
 
 
 <header class="text-left title">
-  <h1 class="title">#tidytuesday 2-22-22, The Freedom index and misleading visualization</h1>
+  <h1 class="title">#tidytuesday 2/22/22, The Freedom index and misleading visualization</h1>
 </header>
 <section id="category-pane" class="meta">
   
@@ -73,29 +73,16 @@
 
 <p>This weeks tidy tuesday includes the dataset of the Freedom index produced by the Freedom House and the UN.</p>
 <p>One of the included visualizations kind of struck me the wrong way.</p>
-<p><a href="./pic1.png">Included Visualization</a></p>
+<div class="figure">
+<img src="pic1.png" alt="" />
+<p class="caption">Included Visualization</p>
+</div>
 <p>The y axis only goes from 85 to 100, and tells the story about how the United States’ freedom is very quickly eroding. While this does tell a story, it certaintly isn’t the entire story.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
-<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
-## v tibble  3.1.6     v dplyr   1.0.7
-## v tidyr   1.2.0     v stringr 1.4.0
-## v readr   2.1.2     v forcats 0.5.1</code></pre>
-<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
-<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre class="r"><code>library(ggthemes)</code></pre>
+<pre class="r"><code>library(tidyverse)
+library(ggthemes)</code></pre>
 <pre class="r"><code>data &lt;- tidytuesdayR::tt_load(&quot;2022-02-22&quot;)</code></pre>
-<pre><code>## --- Compiling #TidyTuesday Information for 2022-02-22 ----</code></pre>
-<pre><code>## --- There is 1 file available ---</code></pre>
-<pre><code>## --- Starting Download ---</code></pre>
 <pre><code>## 
 ##  Downloading file 1 of 1: `freedom.csv`</code></pre>
-<pre><code>## --- Download complete ---</code></pre>
 <p>variable class description
 country character Country Name
 year double Year
@@ -109,7 +96,7 @@ is_ldc double Is a least developed country (binary 0/1)</p>
 
 skimr::skim(new_data)</code></pre>
 <table>
-<caption><span id="tab:unnamed-chunk-3">Table 1: </span>Data summary</caption>
+<caption><span id="tab:unnamed-chunk-4">Table 1: </span>Data summary</caption>
 <tbody>
 <tr class="odd">
 <td align="left">Name</td>
@@ -281,13 +268,10 @@ skimr::skim(new_data)</code></pre>
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>library(cowplot)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;cowplot&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:ggthemes&#39;:
-## 
-##     theme_map</code></pre>
-<pre class="r"><code>mean_freedoms &lt;- new_data %&gt;%
+<pre class="r"><code>library(cowplot)
+
+
+mean_freedoms &lt;- new_data %&gt;%
         group_by(year) %&gt;%
         summarise(civil_liberties = mean(CL), political_rights = mean(PR)) %&gt;%
         pivot_longer(cols = c(civil_liberties, political_rights), names_to = &quot;measure&quot;, values_to = &quot;value&quot;) %&gt;%
@@ -303,11 +287,10 @@ plt2 &lt;- ggplot(data = mean_freedoms) +
         geom_line(mapping = aes(x = year, y = value, color = measure)) +
         scale_y_reverse() +
         scale_x_continuous(breaks = seq(min(mean_freedoms$year), max(mean_freedoms$year), by = 1))+
-        ylim(7, 1)</code></pre>
-<pre><code>## Scale for &#39;y&#39; is already present. Adding another scale for &#39;y&#39;, which will
-## replace the existing scale.</code></pre>
-<pre class="r"><code>cowplot::plot_grid(plt1, plt2, nrow = 2, ncol = 1)</code></pre>
-<p><img src="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+        ylim(7, 1)
+
+cowplot::plot_grid(plt1, plt2, nrow = 2, ncol = 1)</code></pre>
+<p><img src="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Compare the top graph, where the y axis limits were auto-applied by ggplot2, and the bottom graph, where the entire range is represented.</p>
 <p>The top graph paints a disturbing picture. Civil liberties and political rights are tanking! We need immediate intervention! However, the bottom graph paints the fuller picture. Civil liberties and political rights are falling, however the progression is much slower. Something should be done, but we may have some more time to do something about it.</p>
 <p>So now, the goal is simple: let’s replicate the original graph with appropriate axis, with the data we have.</p>
@@ -321,7 +304,7 @@ plt2 &lt;- ggplot(data = mean_freedoms) +
 
 
 ggplot(data = us)+
-        geom_line(mapping = aes(x = year, y = value, color = measure)) +
+        geom_line(mapping = aes(x = year, y = value, color = measure), size = 3) +
         scale_y_reverse(breaks = seq(1, 7, by = 1), labels = seq(1, 7, by = 1)) +
         scale_x_continuous(breaks = seq(min(us$year), max(us$year), by = 2))+
         theme_economist()+
@@ -330,10 +313,10 @@ ggplot(data = us)+
         xlab(&quot;&quot;)+
         ylab(&quot;Freedom Score&quot;)+
         theme(axis.title.y = element_text(vjust = 3))</code></pre>
-<p><img src="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>This is again, misleading. Let’s fix the y axis.</p>
 <pre class="r"><code>ggplot(data = us)+
-        geom_line(mapping = aes(x = year, y = value, color = measure)) +
+        geom_line(mapping = aes(x = year, y = value, color = measure), size = 3) +
         scale_y_reverse(breaks = seq(1, 7, by = 1), labels = seq(1, 7, by = 1)) +
         scale_x_continuous(breaks = seq(min(us$year), max(us$year), by = 2))+
         theme_economist()+
@@ -343,9 +326,7 @@ ggplot(data = us)+
         ylab(&quot;Freedom Score&quot;)+
         theme(axis.title.y = element_text(vjust = 3))+
         ylim(7, 1)</code></pre>
-<pre><code>## Scale for &#39;y&#39; is already present. Adding another scale for &#39;y&#39;, which will
-## replace the existing scale.</code></pre>
-<p><img src="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>As we can see, the freedom is dropping, but not tanking.</p>
 
   </div>
