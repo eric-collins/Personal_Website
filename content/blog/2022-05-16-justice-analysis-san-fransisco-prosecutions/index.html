@@ -1,0 +1,111 @@
+---
+title: 'Justice Analysis: San Fransisco Prosecutions'
+author: 'Eric Collins'
+date: '2022-05-16'
+slug: []
+categories: []
+tags: []
+comments: no
+showcomments: yes
+showpagemeta: yes
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>I’ve been out of the office a few days, and to start getting back into the groove of things I figured I would do an analysis of an interesting dataset. I found this data on <a href="https://www.kaggle.com/datasets/vivovinco/district-attorney-case-resolutions">Kaggle</a>, and given my interest in criminal law, I thought it would make an interesting set.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.2.0     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(ggthemes)
+
+cases &lt;- read_csv(&#39;District_Attorney_Case_Resolutions.csv&#39;)</code></pre>
+<pre><code>## Rows: 61515 Columns: 14</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr  (9): incident_number, crime_type, filed_case_type, list_of_filed_charge...
+## dbl  (2): court_number, disposition_code
+## date (3): arrest_date, filing_date, disposition_date
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>new_cases &lt;- cases %&gt;%
+        janitor::clean_names() %&gt;%
+        filter(filing_date &gt; as.Date(&quot;2011-12-31&quot;)) %&gt;%
+        select(arrest_date, filing_date, crime_type, filed_case_type, list_of_filed_charges, dv_case, disposition_date, case_status) %&gt;%
+        mutate(charge_count = str_count(list_of_filed_charges, &quot;,&quot;),
+               charge_count = charge_count + 1,
+               arrest_to_file = filing_date - arrest_date,
+               file_to_dispo = disposition_date - filing_date)</code></pre>
+<pre class="r"><code>arrests_count &lt;- new_cases %&gt;% group_by(filed_case_type) %&gt;%
+        count(arrest_date, name = &#39;arrests&#39;) %&gt;%
+        rename(date = arrest_date)
+
+file_count &lt;- new_cases %&gt;% group_by(filed_case_type) %&gt;%
+        count(filing_date, name = &#39;filings&#39;) %&gt;%
+        rename(date = filing_date)
+
+dispo_count &lt;- new_cases %&gt;% group_by(filed_case_type) %&gt;%
+        count(disposition_date, name = &#39;dispos&#39;) %&gt;%
+        rename(date = disposition_date)
+
+
+case_counts_by_date &lt;- arrests_count %&gt;%
+        full_join(file_count) %&gt;%
+        full_join(dispo_count) %&gt;%
+        replace(., is.na(.), 0) %&gt;%
+        ungroup() %&gt;%
+        filter(date &gt; as.Date(&quot;2011-12-31&quot;)) %&gt;%
+        pivot_longer(cols = c(arrests, filings, dispos), names_to = &quot;type&quot;, values_to = &quot;count&quot;) %&gt;%
+        mutate(type = case_when(
+                type == &#39;arrests&#39; ~ &#39;Arrests&#39;,
+                type == &#39;filings&#39; ~ &#39;Filings&#39;,
+                type == &#39;dispos&#39; ~ &#39;Dispositions&#39;
+        )) %&gt;%
+        mutate(type = as_factor(type))</code></pre>
+<pre><code>## Joining, by = c(&quot;filed_case_type&quot;, &quot;date&quot;)
+## Joining, by = c(&quot;filed_case_type&quot;, &quot;date&quot;)</code></pre>
+<pre class="r"><code>case_counts_by_date$type = fct_relevel(case_counts_by_date$type, c(&#39;Arrests&#39;, &#39;Filings&#39;, &#39;Dispositions&#39;))</code></pre>
+<pre class="r"><code>colors = c(&quot;Felony&quot; = &quot;#ee8f71&quot;, &quot;Misdemeanor&quot; = &quot;#014d64&quot;)
+
+ggplot(data = case_counts_by_date) +
+        geom_line(mapping = aes(x = date, y = count, color = filed_case_type), alpha = .7) +
+        theme_economist() +
+        scale_color_manual(values = colors, name = &quot;Filed Case Type&quot;) +
+        facet_wrap(vars(type), nrow = 3, ncol = 1, scales = &#39;free_y&#39;) +
+        labs(title = &quot;Counts of Action taken by SF Police/DA Over time&quot;) +
+        xlab(&quot;Time&quot;) +
+        ylab(&quot;Count&quot;) </code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+First, we can explore the count of actions taken by the Police and DA over time. We can see that there was a huge spike in dispositions during the beginning of 2018. There are also consistently more filings than arrests on any given day. We can also very clearly see the drop in everything at the start of the pandemic, and it’s interesting it hsan’t really recovered.</p>
+<pre class="r"><code>date_move &lt;- new_cases %&gt;%
+        pivot_longer(cols = c(arrest_to_file, file_to_dispo), names_to = &quot;type&quot;, values_to = &quot;value&quot;) %&gt;%
+        select(arrest_date, filed_case_type, type, value) %&gt;%
+        mutate(type = case_when(
+                type == &quot;arrest_to_file&quot; ~ &quot;Arrest to File Date&quot;,
+                type == &quot;file_to_dispo&quot; ~ &quot;File to Dispo Date&quot;
+        ))</code></pre>
+<pre class="r"><code>colors = c(&quot;Arrest to File Date&quot; = &quot;#ee8f71&quot;, &quot;File to Dispo Date&quot; = &quot;#014d64&quot;)
+
+ggplot(data = date_move) +
+        geom_line(mapping = aes(x = arrest_date, y = value, color = type), alpha = .5) +
+        theme_economist() +
+        scale_color_manual(values = colors, name = &quot;&quot;) +
+        facet_wrap(vars(filed_case_type), nrow = 2, ncol = 1) +
+        theme(axis.title.y = element_text(vjust = 4)) +
+        labs(title = &quot;Time Between Actions&quot;) +
+        xlab(&quot;Time&quot;) +
+        ylab(&quot;Counts of Days&quot;)</code></pre>
+<pre><code>## Don&#39;t know how to automatically pick scale for object of type difftime. Defaulting to continuous.</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-6-1.png" width="672" />
+Next we can look at the time between actions taken. We can see often the time between filing and a disposition is much longer than the time between arrest and filing, and misdemeanors take less time than felonies, as we would expect to be the case. There are also rare occasions where there is a filing prior to arrest, which makes sense. There are some strange issues where there is a disposition before filing, which doesn’t make sense.</p>

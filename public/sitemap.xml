@@ -2,16 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://ericcollins.info/blog/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://ericcollins.info/blog/2022-04-03-mario-kart-dashboard-project-part-2/</loc>
+    <lastmod>2022-04-03T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/</loc>
     <lastmod>2022-02-24T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>https://ericcollins.info/blog/</loc>
-    <lastmod>2022-02-24T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://ericcollins.info/categories/</loc>
-    <lastmod>2022-02-24T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://ericcollins.info/</loc>
     <lastmod>2022-02-24T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://ericcollins.info/categories/tidytuesday/</loc>

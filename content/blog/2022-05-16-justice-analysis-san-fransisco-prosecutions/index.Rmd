@@ -17,7 +17,7 @@ I've been out of the office a few days, and to start getting back into the groov
 library(tidyverse)
 library(ggthemes)
 
-data <- read_csv('District_Attorney_Case_Resolutions.csv')
+cases <- read_csv('District_Attorney_Case_Resolutions.csv')
 ```
 
 
@@ -107,9 +107,10 @@ ggplot(data = date_move) +
         theme_economist() +
         scale_color_manual(values = colors, name = "") +
         facet_wrap(vars(filed_case_type), nrow = 2, ncol = 1) +
+        theme(axis.title.y = element_text(vjust = 4)) +
         labs(title = "Time Between Actions") +
         xlab("Time") +
         ylab("Counts of Days")
 
 ```
-Next we can look at the time between actions taken. We can see often the time between filing and a disposition is much longer than the time between arrest and filing, and misdemeanors take less time than felonies, as we would expect to be the case. 
+Next we can look at the time between actions taken. We can see often the time between filing and a disposition is much longer than the time between arrest and filing, and misdemeanors take less time than felonies, as we would expect to be the case. There are also rare occasions where there is a filing prior to arrest, which makes sense. There are some strange issues where there is a disposition before filing, which doesn't make sense. 

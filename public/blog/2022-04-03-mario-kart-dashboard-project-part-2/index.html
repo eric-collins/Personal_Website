@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<meta name="description" content="Blog of Eric Collins">
+<meta name="keywords" content="blog, data, data science, analysis, data analysis">
+
+<title>
+  Hi, I&#39;m Eric - Mario Kart Dashboard Project Part 2 
+</title>
+
+<meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Roboto+Slab:wght@400;700&family=Roboto:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+<link rel="stylesheet" href="https://ericcollins.info/css/main.css">
+<link rel="stylesheet" href="https://ericcollins.info/css/custom.css">
+
+
+
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+
+</head>
+<body lang="en-US">
+<div class="container">
+
+
+<header class="text-left title">
+  <h1 class="title">Mario Kart Dashboard Project Part 2</h1>
+</header>
+<section id="category-pane" class="meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-left meta">
+        PUBLISHED ON APR 3, 2022 
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+<section id="content-pane" class="">
+  <div class="col-md-12 text-justify content">
+    
+    
+    
+    
+<script src="https://ericcollins.info/blog/2022-04-03-mario-kart-dashboard-project-part-2/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Unfortunately, the next bit of code is the data wrangling. It’s the same bit of code repeated with exceptionally minor changes, but necessary changes. I hope this is useful.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --</code></pre>
+<pre><code>## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.2.0     v stringr 1.4.0
+## v readr   2.1.2     v forcats 0.5.1</code></pre>
+<pre><code>## Warning: package &#39;tibble&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;tidyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;readr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.1.2</code></pre>
+<pre><code>## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>karts &lt;- read_csv(&quot;karts.csv&quot;)</code></pre>
+<pre><code>## Rows: 40 Columns: 14</code></pre>
+<pre><code>## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr  (1): body
+## dbl (13): wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>characters &lt;- read_csv(&quot;characters.csv&quot;)</code></pre>
+<pre><code>## Rows: 44 Columns: 14
+## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr  (1): driver
+## dbl (13): wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>tires &lt;- read_csv(&quot;tires.csv&quot;)</code></pre>
+<pre><code>## Rows: 21 Columns: 14
+## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr  (1): tire
+## dbl (13): wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>gliders &lt;- read_csv(&quot;gliders.csv&quot;)</code></pre>
+<pre><code>## Rows: 14 Columns: 14
+## -- Column specification --------------------------------------------------------
+## Delimiter: &quot;,&quot;
+## chr  (1): glider
+## dbl (13): wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg
+## 
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>karts &lt;- karts %&gt;%
+        mutate(body = case_when(
+                body == &quot;BiddybuggyBuggybud&quot; ~ &quot;Biddybuggy&quot;,
+                body == &quot;SneekerBounder&quot; ~ &quot;Sneeker&quot;,
+                body == &quot;Sports CoupeSports Coupé&quot; ~ &quot;Sports Coupe&quot;,
+                body == &quot;Gold StandardGold Kart&quot; ~ &quot;Gold Standard&quot;,
+                body == &quot;Mr. ScootyMr Scooty&quot; ~ &quot;Mr. Scooty&quot;, 
+                body == &quot;Standard ATVStandard Quad&quot; ~ &quot;Standard ATV&quot;, 
+                TRUE ~ body
+        )) %&gt;%
+        drop_na()
+
+
+characters &lt;- characters %&gt;%
+        mutate(driver = str_sub(driver,1,nchar(driver)-3)) %&gt;%
+        mutate(driver = gsub(&quot;([a-z])([A-Z])&quot;,&quot;\\1 \\2&quot;,driver)) %&gt;%
+        separate(driver, into = c(&quot;keep1&quot;, &quot;keep2&quot;, &quot;drop1&quot;, &quot;drop2&quot;)) %&gt;%
+        mutate(drop1 = if_else(nchar(drop1) &lt; 2, NA_character_, drop1),
+               keep2 = if_else(nchar(keep2) &lt; 2, NA_character_, keep2)) %&gt;%
+        replace_na(list(keep1 = &quot;&quot;, keep2 = &quot;&quot;, drop1 = &quot;&quot;)) %&gt;%
+        mutate(driver = str_c(keep1, keep2, drop1, sep = &quot; &quot;)) %&gt;%
+        select(-c(keep1, keep2, drop1, drop2)) %&gt;%
+        drop_na() %&gt;%
+        relocate(driver) %&gt;%
+        mutate(driver = str_trim(driver))</code></pre>
+<pre><code>## Warning: Expected 4 pieces. Additional pieces discarded in 1 rows [44].</code></pre>
+<pre><code>## Warning: Expected 4 pieces. Missing pieces filled with `NA` in 42 rows [1, 2, 3,
+## 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18, 19, 20, 21, ...].</code></pre>
+<pre class="r"><code>tires &lt;- tires %&gt;%
+        mutate(tire = case_when(
+                tire == &quot;StandardNormal&quot; ~ &quot;Standard&quot;,
+                tire == &quot;WoodWooden&quot; ~ &quot;Wood&quot;,
+                tire == &quot;Blue StandardNormal Blue&quot; ~ &quot;Blue Standard&quot;,
+                tire == &quot;Hot MonsterFunky Monster&quot; ~ &quot;Hot Monster&quot;,
+                tire == &quot;Gold TiresGold Wheels&quot; ~ &quot;Gold Tires&quot;,
+                tire == &quot;GLA TiresGLA Wheels&quot; ~ &quot;GLA Tires&quot;,
+                tire == &quot;Triforce TiresTriforce Tyres&quot; ~ &quot;Triforce Tires&quot;,
+                tire == &quot;Leaf TiresLeaf Tyres&quot; ~ &quot;Leaf Tires&quot;,
+                TRUE ~ tire
+        )) %&gt;%
+        drop_na()</code></pre>
+<pre class="r"><code>kart_dupes &lt;- karts %&gt;%
+        mutate(key = as.character(paste0(wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg)))
+
+kart_out &lt;- kart_dupes %&gt;%
+        mutate(bodies = NA_character_) %&gt;%
+        slice(0)
+
+keys &lt;- unique(kart_dupes$key)
+
+
+for(kart_key in keys){
+        
+        #print(kart_key)
+        new_dupes &lt;-  kart_dupes %&gt;%
+                filter(key == kart_key)
+        
+        bodies &lt;- new_dupes %&gt;%
+                select(1)
+
+        list &lt;- as.list(bodies[[1]])
+        
+        y &lt;- toString(list)
+        
+        z &lt;- new_dupes %&gt;%
+                mutate(bodies = y)
+        
+        kart_out &lt;- bind_rows(kart_out, z)
+        
+}
+
+kart_output &lt;- kart_out %&gt;%
+        select(-c(body, key)) %&gt;%
+        distinct() %&gt;%
+        relocate(bodies) %&gt;%
+        setNames(paste0(&quot;karts.&quot;, names(kart_out)))</code></pre>
+<pre class="r"><code>tire_dupes &lt;- tires %&gt;%
+        mutate(key = as.character(paste0(wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg)))
+
+tire_out &lt;- tire_dupes %&gt;%
+        mutate(tires = NA_character_) %&gt;%
+        slice(0)
+
+keys &lt;- unique(tire_dupes$key)
+
+
+for(tire_key in keys){
+        
+        #print(kart_key)
+        new_dupes &lt;-  tire_dupes %&gt;%
+                filter(key == tire_key)
+        
+        wheels &lt;- new_dupes %&gt;%
+                select(1)
+
+        list &lt;- as.list(wheels[[1]])
+        
+        y &lt;- toString(list)
+        
+        z &lt;- new_dupes %&gt;%
+                mutate(tires = y)
+        
+        tire_out &lt;- bind_rows(tire_out, z)
+        
+}
+
+
+tire_output &lt;- tire_out %&gt;%
+        select(-c(tire, key)) %&gt;%
+        distinct() %&gt;%
+        relocate(tires) %&gt;%
+        setNames(paste0(&quot;tires.&quot;, names(tire_out)))</code></pre>
+<pre class="r"><code>char_dupes &lt;- characters %&gt;%
+        mutate(key = as.character(paste0(wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg)))
+
+char_out &lt;- char_dupes %&gt;%
+        mutate(drivers = NA_character_) %&gt;%
+        slice(0)
+
+keys &lt;- unique(char_dupes$key)
+
+
+for(char_key in keys){
+        
+        #print(kart_key)
+        new_dupes &lt;-  char_dupes %&gt;%
+                filter(key == char_key)
+        
+        chars &lt;- new_dupes %&gt;%
+                select(1)
+
+        list &lt;- as.list(chars[[1]])
+        
+        y &lt;- toString(list)
+        
+        z &lt;- new_dupes %&gt;%
+                mutate(drivers = y)
+        
+        char_out &lt;- bind_rows(char_out, z)
+        
+}
+
+char_output &lt;- char_out %&gt;%
+        select(-c(driver, key)) %&gt;%
+        relocate(drivers) %&gt;%
+        distinct() %&gt;%
+        setNames(paste0(&quot;char.&quot;, names(char_out)))</code></pre>
+<pre class="r"><code>glider_dupes &lt;- gliders %&gt;%
+        mutate(key = as.character(paste0(wg, ac, on, of, mt, sl, sw, sa, sg, tl, tw, ta, tg)))
+
+glider_out &lt;- glider_dupes %&gt;%
+        mutate(glider = NA_character_) %&gt;%
+        slice(0)
+
+keys &lt;- unique(glider_dupes$key)
+
+
+for(glider_key in keys){
+        
+        #print(kart_key)
+        new_dupes &lt;-  glider_dupes %&gt;%
+                filter(key == glider_key)
+        
+        glides &lt;- new_dupes %&gt;%
+                select(1)
+
+        list &lt;- as.list(glides[[1]])
+        
+        y &lt;- toString(list)
+        
+        z &lt;- new_dupes %&gt;%
+                mutate(gliders = y)
+        
+        glider_out &lt;- bind_rows(glider_out, z)
+        
+}
+
+glider_output &lt;- glider_out %&gt;%
+        select(-c(glider, key)) %&gt;%
+        distinct() %&gt;%
+        relocate(gliders) %&gt;%
+        setNames(paste0(&quot;glider.&quot;, names(glider_out)))</code></pre>
+<pre class="r"><code>characters_karts &lt;- crossing(char_output, kart_output, .name_repair = &#39;unique&#39;) %&gt;%
+        drop_na()
+
+ck_tires &lt;- crossing(characters_karts, tire_output, .name_repair = &#39;unique&#39;) %&gt;%
+        drop_na()
+
+all &lt;- crossing(ck_tires, glider_output, .name_repair = &#39;unique&#39;) %&gt;%
+        drop_na()</code></pre>
+<pre class="r"><code>all_temp &lt;- all %&gt;%
+        mutate(raw_wg = (all %&gt;% select(ends_with(&quot;wg&quot;)) %&gt;% rowSums()),
+               raw_ac = (all %&gt;% select(ends_with(&quot;ac&quot;)) %&gt;% rowSums()),
+               raw_on = (all %&gt;% select(ends_with(&quot;on&quot;)) %&gt;% rowSums()),
+               raw_of = (all %&gt;% select(ends_with(&quot;of&quot;)) %&gt;% rowSums()),
+               raw_mt = (all %&gt;% select(ends_with(&quot;mt&quot;)) %&gt;% rowSums()),
+               raw_sl = (all %&gt;% select(ends_with(&quot;sl&quot;)) %&gt;% rowSums()),
+               raw_sw = (all %&gt;% select(ends_with(&quot;sw&quot;)) %&gt;% rowSums()),
+               raw_sa = (all %&gt;% select(ends_with(&quot;sa&quot;)) %&gt;% rowSums()),
+               raw_sg = (all %&gt;% select(ends_with(&quot;sg&quot;)) %&gt;% rowSums()),
+               raw_tl = (all %&gt;% select(ends_with(&quot;tl&quot;)) %&gt;% rowSums()),
+               raw_tw = (all %&gt;% select(ends_with(&quot;tw&quot;)) %&gt;% rowSums()),
+               raw_ta = (all %&gt;% select(ends_with(&quot;ta&quot;)) %&gt;% rowSums()),
+               raw_tg = (all %&gt;% select(ends_with(&quot;tg&quot;)) %&gt;% rowSums())
+               ) %&gt;%
+        mutate(
+                Weight = (raw_wg + 3) / 4,
+                Acceleration = (raw_ac +3) /4,
+                &quot;On-Road Traction&quot; = (raw_on + 3)/4,
+                &quot;Off-Road Traction&quot; = (raw_of + 3)/4,
+                &quot;Mini Turbo&quot; = (raw_mt +3) /4,
+                &quot;Ground Speed&quot; = (raw_sl +3)/4,
+                &quot;Water Speed&quot; = (raw_sw +3) /4,
+                &quot;Anti-Gravity Speed&quot; = (raw_sa+3)/4,
+                &quot;Air Speed&quot; = (raw_sg+3)/4,
+                &quot;Ground Handling&quot; = (raw_tl+3) /4,
+                &quot;Water Handling&quot; = (raw_tw+3)/4,
+                &quot;Anti-Gravity Handling&quot; = (raw_ta+3)/4,
+                &quot;Air Handling&quot; = (raw_tg +3)/4
+        )
+
+
+all_stats &lt;- all_temp %&gt;%
+        select(Driver = char.driver, Kart = karts.body, Tires = tires.tire, Glider = glider.glider, Weight:`Air Handling`) %&gt;%
+        mutate(key = as.character(paste0(Weight, Acceleration, `On-Road Traction`, `Off-Road Traction`, `Mini Turbo`, `Ground Speed`, `Water Speed`, `Anti-Gravity Speed`, `Air Speed`, `Ground Speed`, `Water Handling`, `Anti-Gravity Handling`, `Air Handling`)))</code></pre>
+<pre class="r"><code>long_stats &lt;- all_stats %&gt;%
+        pivot_longer(cols = &quot;Weight&quot;:&quot;Air Handling&quot;, names_to = &quot;stat&quot;, values_to = &#39;value&#39;)</code></pre>
+<pre class="r"><code>write_csv(all_stats, &quot;all_stats_wide.csv&quot;)
+write_csv(long_stats, &quot;all_stats_long.csv&quot;)</code></pre>
+
+  </div>
+</section>
+<section id="tag-pane" class="meta">
+  
+  <div class="col-md-12">
+    <h6 class="text-right meta">
+      
+      
+      
+      
+    </h6>
+  </div>
+  
+</section>
+
+
+
+
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-shenoybr-github-io-hugo-goa-demo" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+<section id="menu-pane" class="menu text-center">
+  
+  
+  <span><a class="menu-item" href="https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/">&lt; prev | </a></span>
+  
+  
+  <span><a class="menu-item" href="/blog">blog</a></span>
+  
+  
+  
+  <h4 class="text-center"><a class="menu-item" href="https://ericcollins.info">home</a></h4>
+</section>
+
+
+
+<footer class="text-center footer">
+  <hr />
+  
+  <h6 class="text-center copyright">© 2022. Eric Collins. <a href="http://creativecommons.org/licenses/by/3.0/">Some Rights Reserved</a>.</h6>
+  
+  <h6 class="text-center powered">Powered by <a href="https://gohugo.io/">Hugo  v0.92.0</a> &amp; <a href="https://github.com/shenoybr/hugo-goa">Goa</a>.</h6>
+  
+      
+      <h6><a href="" aria-label="RSS Feed"><i class="fas fa-rss" aria-hidden="true"></i></a></h6>
+    
+  
+</footer>
+
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  
+
+<script type="text/javascript">
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'XYZ', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/main.js"></script>
+<script src="/js/custom.js"></script>
+</body>
+</html>
+
+

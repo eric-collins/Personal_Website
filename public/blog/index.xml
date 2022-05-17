@@ -6,7 +6,17 @@
     <description>Recent content in Blogs on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Thu, 24 Feb 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/blog/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 03 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mario Kart Dashboard Project Part 2</title>
+      <link>https://ericcollins.info/blog/2022-04-03-mario-kart-dashboard-project-part-2/</link>
+      <pubDate>Sun, 03 Apr 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/blog/2022-04-03-mario-kart-dashboard-project-part-2/</guid>
+      <description>Unfortunately, the next bit of code is the data wrangling. It’s the same bit of code repeated with exceptionally minor changes, but necessary changes. I hope this is useful.
+library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.5 v purrr 0.3.4## v tibble 3.1.6 v dplyr 1.0.7## v tidyr 1.2.0 v stringr 1.4.0## v readr 2.1.2 v forcats 0.5.1## Warning: package &amp;#39;tibble&amp;#39; was built under R version 4.</description>
+    </item>
+    
     <item>
       <title>#tidytuesday 2/22/22, The Freedom index and misleading visualization</title>
       <link>https://ericcollins.info/blog/2022-02-24-tidytuesday-2-22-22/</link>
