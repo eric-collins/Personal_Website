@@ -59,15 +59,5 @@ Papi and Nana
 First, a tad of exploratory analysis.</description>
     </item>
     
-    <item>
-      <title>Not So Standard Analysis</title>
-      <link>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</link>
-      <pubDate>Fri, 12 Nov 2021 00:00:00 +0000</pubDate>
-      
-      <guid>https://ericcollins.info/blog/2022-01-29-not-so-standard-analysis/</guid>
-      <description>I was listening to another podcast (Your Mom’s House), and another Eric, (who also happens to be another public-education data analyst) submitted an analysis of the episodes using transcripts of the episode. I wanted to add some language processing to my repertoire, so I decided to perform a similar analysis for my favorite podcast, Not-so-Standard Deviations.
-As previously mentioned, I borrowed heavily from Eric Ekholme’s analysis of Your Mom’s House, which can be found at his website.</description>
-    </item>
-    
   </channel>
 </rss>

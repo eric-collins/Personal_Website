@@ -1,11 +1,10 @@
 ---
-title: Not So Standard Analysis
-author: Eric Collins
+title: "Not So Standard Analysis"
+author: "Eric Collins"
 date: '2021-11-12'
-slug: []
 categories: []
-tags:
-  - Data Analysis
+tags: []
+slug: []
 ---
 
 I was listening to another podcast (Your Mom's House), and another Eric, (who also happens to be another public-education data analyst) submitted an analysis of the episodes using transcripts of the episode. I wanted to add some language processing to my repertoire, so I decided to perform a similar analysis for my favorite podcast, Not-so-Standard Deviations. 

@@ -6,7 +6,17 @@
     <description>Recent content on Hi, I&#39;m Eric</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 03 Apr 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 16 May 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://ericcollins.info/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Justice Analysis: San Fransisco Prosecutions</title>
+      <link>https://ericcollins.info/blog/2022-05-16-justice-analysis-san-fransisco-prosecutions/</link>
+      <pubDate>Mon, 16 May 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://ericcollins.info/blog/2022-05-16-justice-analysis-san-fransisco-prosecutions/</guid>
+      <description>I’ve been out of the office a few days, and to start getting back into the groove of things I figured I would do an analysis of an interesting dataset. I found this data on Kaggle, and given my interest in criminal law, I thought it would make an interesting set.
+library(tidyverse)## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --## v ggplot2 3.3.5 v purrr 0.3.4## v tibble 3.</description>
+    </item>
+    
     <item>
       <title>Mario Kart Dashboard Project Part 2</title>
       <link>https://ericcollins.info/blog/2022-04-03-mario-kart-dashboard-project-part-2/</link>
