@@ -16,7 +16,7 @@ params:
   authorimage: badge_pic.jpg
   dateformat: Jan 2, 2006
   description: | 
-        Currently @volusiaschools, using data analytics and data science to inform strategic policy decisions.
+        Currently an Analytic Scientist at FICO, using cutting edge prediction technologies to make lending and borrowing easier.
   
         "Solving a problem is hard enough; it gets that much harder if you’ve decided beforehand it can’t be done.”
   
@@ -28,7 +28,7 @@ params:
     poweredby: yes
     socialmarkup: yes
     toc: yes
-  intro: Data Scientist/Lego Enthusiast/Mario Kart Nerd
+  intro: Data Scientist
   meta:
     description: Blog of Eric Collins
     keywords: blog, data, data science, analysis, data analysis
